@@ -1,6 +1,17 @@
 # CUDA 12.4 기반 devel 이미지 (Ubuntu 22.04) 사용 → GPU 지원 필요 시 사용
 FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
+
+
+# 대화형 프롬프트 비활성화 설정
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 키보드 레이아웃 미리 설정 (US 레이아웃 선택)
+RUN echo "keyboard-configuration keyboard-configuration/layout select English (US)" | debconf-set-selections && \
+    echo "keyboard-configuration keyboard-configuration/variant select English (US)" | debconf-set-selections && \
+    echo "keyboard-configuration keyboard-configuration/model select Generic 105-key PC" | debconf-set-selections
+
+
 # 필수 패키지 설치: Python 3.10, venv, 개발 헤더, 빌드 도구 등
 RUN apt-get update && apt-get install -y \
     python3.10 \
