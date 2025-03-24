@@ -1,0 +1,306 @@
+@import "tailwindcss";
+/*.App {
+  font-family: Arial, sans-serif;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.thumbnail {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(128, 128, 128, 0.5);
+}
+
+.modal-dialog {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 90%; 
+  max-height: 90%; 
+  overflow: auto;
+}
+
+.modal-fullscreen-sm-down {
+  width: 90%; 
+  height: 90%; 
+}
+
+.modal-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.clicked-image {
+  flex: 2; 
+
+.other-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1; 
+
+.full-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease; 
+}
+
+.full-image:hover {
+  transform: scale(1.2); 
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: black;
+  font-size: 35px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+*/
+
+/* 전체 레이아웃 */
+.layout-container {
+  display: flex;
+  height: calc(100vh - 70px);/* 헤더 높이 제외 */
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 🔹 사이드바 스타일 */
+.sidebar {
+  width: 300px;
+  background-color: #f4f4f4;
+  border-radius: 10px; /* 모서리 둥글게 */
+  padding: 10px;
+  margin: 0px;
+
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  
+  transition: width 0.2s ease;  /* 사이드바 기본 위치 */
+  transform: translateX(0);
+  position: relative;
+  overflow-y: scroll; /* 사이드바 스크롤 활성화 */
+  max-height: 100vh; /* 전체 화면 높이 제한 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+}
+
+/* 사이드바 숨김 상태일 때 */
+.sidebar.collapsed {
+  width: 60px; /* 사이드바 화면 밖으로 밀어냄 */
+}
+
+/* 사이드바 토글 버튼 */
+.sidebar-toggle {
+  position: absolute;
+  top: 5%;   /* 사이드바의 맨 위에서 10px 내려옴 */
+  left: 90%; /* 사이드바의 오른쪽에서 10px 띄움 */
+  transform: translate(-50%, -50%);
+
+  width: 20px; /* 버튼의 너비 */
+  height: 20px; /* 버튼의 높이 */
+  border: none; /* 버튼 테두리 제거 */
+  cursor: pointer; /* 커서 모양 변경 */
+  background-size: cover; /* 이미지 크기 조정 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-position: center; /* 이미지 중앙 정렬 */
+}
+
+.sidebar-toggle.open {
+  background-image: url('../public/arrow_left.svg'); /* 사이드바가 열려 있을 때 이미지 */
+}
+
+.sidebar-toggle.closed {
+  background-image: url('../public/arrow_right.svg'); /* 사이드바가 닫혀 있을 때 이미지 */
+  position: absolute;
+  top: 5%;   
+  left: 50%; 
+  transform: translate(-50%, -50%);
+}
+
+/* .sidebar-toggle:hover {
+  cursor: pointer;
+  filter: drop-shadow(0 0 3px rgba(29, 148, 253, 0.839));
+  transition: filter 0.1s ease;
+} */
+
+/* 로고 영역 전체 */
+.sidebar-logo {
+  position: absolute;
+  top: 5%;   
+  left: 50%;     
+  transform: translate(-50%, -50%);
+  width: 50px;         /* 로고 영역 너비 */
+  height: 50px;        /* 로고 영역 높이 */
+  background-image: url('../public/logo192.png'); /* public 폴더에 있는 파일, 경로 앞에 슬래시 필요 */
+  background-repeat: no-repeat;          /* 반복 없이 */
+  background-position: center;           /* 중앙 정렬 */
+  background-size: contain;              /* 요소 안에 맞게 크기 조절 (비율 유지) */
+}
+
+.new-chat-button {
+  position: absolute;
+  display: block;
+  top: 9%;
+  width: 240px;
+  height: 70px;
+  text-align: center;
+  align-content: center;
+  padding: 15px;
+  background-color: white;
+  text-decoration: none;
+  color: #4BA6F7;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.38);
+  border-radius: 15px;
+  margin: 10px auto;
+}
+
+.new-chat-button:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.new-chat-button-mini {
+  position: absolute;
+  top: 12%;   /* 사이드바의 맨 위에서 10px 내려옴 */
+  left: 50%; /* 사이드바의 오른쪽에서 10px 띄움 */
+  transform: translate(-50%, -50%);
+  width: 20px; /* 버튼의 너비 */
+  height: 20px; /* 버튼의 높이 */
+  background-image: url('../public/plus_icon.png');
+  background-size: cover; /* 이미지 크기 조정 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-position: center; /* 이미지 중앙 정렬 */
+  border: none; /* 버튼 테두리 제거 */
+  cursor: pointer; /* 커서 모양 변경 */
+  text-indent: -9999px; /* 텍스트 숨기기 */
+  overflow: hidden; /* 텍스트 숨기기 */
+  cursor: pointer;
+}
+
+.session-list-container {
+  /* position: absolute; /* 부모 요소 내에서 절대 위치 지정 */
+  /* margin: auto; */
+  position: relative;
+  margin: 10px;
+  top: 21.5%;
+  width: 85%;
+  padding: 0px;
+  background-color: #00ff0400;
+}
+
+.session-list {
+  background-color: #ff2f0000;
+  list-style-type: none;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.session-item {
+  margin-bottom: 15px;
+  width: 240px;
+  height: 50px;
+  text-align: center;
+  align-content: center;
+  padding: 15px;
+  background-color: white;
+  text-decoration: none;
+  color: #4BA6F7;
+  font-size: 16px;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  display: block;
+  cursor: pointer;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.38);  /* 기본 그림자 */
+  border-radius: 15px;  /* 모서리를 둥글게 */
+}
+
+.session-item:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+  cursor: pointer;
+}
+
+
+/* 사이드바가 접혔을 때 버튼 위치 재조정 */ 
+ /* .sidebar.collapsed + .sidebar-toggle {
+  left: 30px; 
+}  */
+
+/* 🔹 메인 콘텐츠 */
+.main-content {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  flex: 1;
+  padding: 0px;
+  background-color: #8aff0400;
+  overflow-y: auto;
+  border-radius: 0px;
+  margin: 0px;
+}
+
+/* 🔹 카드 리스트 */
+.card-list {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 15px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 카드 개별 스타일 */
+.card {
+  width: 100px;
+  height: 140px;
+}
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #ffffff; /* 흰색 배경 추가 */
+  transition: transform 0.3s ease;
+}
+
+.header-visible { transform: translateY(0); }
+.header-hidden { transform: translateY(-100%); }
