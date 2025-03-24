@@ -100,11 +100,26 @@ jobs:
         echo "Service: $SERVICE"
         echo "Version: $VERSION"
     
+
+    - name: Debug variables
+      run: |
+        echo "Registry: ${{ steps.login-ecr.outputs.registry }}"
+        echo "ECR Repo: ${{ vars.AWS_ECR_REPO }}"
+        echo "Service: ${{ env.SERVICE }}"
+        echo "Version: ${{ env.VERSION }}"
+        echo "Full Image Tag: ${{ steps.login-ecr.outputs.registry }}/github-action-test:${{ env.SERVICE }}-${{ env.VERSION }}"
+    
+
+
     - name: Build and Push Docker Image  # Docker 이미지 빌드 및 ECR 푸시
       uses: docker/build-push-action@v5  # Docker 빌드/푸시 액션 사용
       with:
         context: ./${{ env.SERVICE }}  # 빌드 컨텍스트를 추출한 서비스 폴더로 지정
         file: ./${{ env.SERVICE }}/Dockerfile  # 사용할 Dockerfile 경로 지정
         push: true  # 빌드 후 이미지 푸시 활성화
-        tags: ${{ steps.login-ecr.outputs.registry }}/${{ vars.AWS_ECR_REPO }}-${{ env.SERVICE }}:${{ env.VERSION }}
+        tags: ${{ steps.login-ecr.outputs.registry }}/github-action-test:${{ env.SERVICE }}-${{ env.VERSION }}
+        # tags: ${{ steps.login-ecr.outputs.registry }}/${{ vars.AWS_ECR_REPO }}:${{ env.SERVICE }}-${{ env.VERSION }}
+
+
         # ECR 레지스트리 주소/레포지토리명-서비스명:버전 형식으로 태그 설정
+        
