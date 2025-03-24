@@ -6,11 +6,17 @@ FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 # 대화형 프롬프트 비활성화 설정
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 키보드 레이아웃 미리 설정 (US 레이아웃 선택)
-RUN echo "keyboard-configuration keyboard-configuration/layout select English (US)" | debconf-set-selections && \
-    echo "keyboard-configuration keyboard-configuration/variant select English (US)" | debconf-set-selections && \
-    echo "keyboard-configuration keyboard-configuration/model select Generic 105-key PC" | debconf-set-selections
+# 키보드 설정 패키지를 미리 구성
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/layout select English (US)' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/variant select English (US)' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/modelcode select pc105' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/layoutcode select us' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/variantcode select ' | debconf-set-selections && \
+    echo 'keyboard-configuration keyboard-configuration/toggle select No toggling' | debconf-set-selections
 
+# 패키지 업데이트 및 keyboard-configuration 미리 설치
+RUN apt-get update && apt-get install -y keyboard-configuration
 
 # 필수 패키지 설치: Python 3.10, venv, 개발 헤더, 빌드 도구 등
 RUN apt-get update && apt-get install -y \
