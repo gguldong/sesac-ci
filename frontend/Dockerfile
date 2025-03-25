@@ -10,6 +10,10 @@ COPY package*.json ./
 # 의존성 설치
 RUN npm install
 
+# ✅ react-scripts에 실행 권한 부여      #k8s에서 애러 뜸(권한 문제)
+RUN chmod +x node_modules/.bin/react-scripts
+
+
 # 소스 코드 복사
 COPY . .
 
