@@ -6,8 +6,8 @@ WORKDIR /app
 
 # MariaDB 설치
 RUN apt-get update && apt-get install -y \
-    # mariadb-server \
-    # mariadb-client \
+    mariadb-server \
+    mariadb-client \
     git \
     build-essential \
     cmake \
