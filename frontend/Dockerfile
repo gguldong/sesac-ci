@@ -20,4 +20,8 @@ COPY . .
 # 리액트 앱 빌드
 CMD ["npm", "run", "build"]
 
+# global serve 설치
+RUN npm install -g serve
 
+# 정적 파일 서빙
+CMD ["serve", "-s", "build", "-l", "3000"]
