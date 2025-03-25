@@ -18,4 +18,6 @@ RUN chmod +x node_modules/.bin/react-scripts
 COPY . .
 
 # 리액트 앱 빌드
-CMD ["npm", "start"]
+CMD ["npm", "run", "build"]
+
+
