@@ -18,7 +18,7 @@ RUN chmod +x node_modules/.bin/react-scripts
 COPY . .
 
 # 리액트 앱 빌드
-CMD ["npm", "run", "build"]
+CMD ["npm", "start"]
 
 # global serve 설치
 RUN npm install -g serve
