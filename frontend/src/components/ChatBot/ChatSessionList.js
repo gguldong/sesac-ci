@@ -13,7 +13,7 @@ const ChatSessionList = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/sessions?user_id=${user.user_id}`);
+        const res = await fetch(`http://backend-service:8000/sessions?user_id=${user.user_id}`);
         const data = await res.json();
         dispatch(setSessions(data)); // Redux 상태 업데이트
       } catch (error) {

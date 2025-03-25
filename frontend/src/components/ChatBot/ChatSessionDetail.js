@@ -21,7 +21,7 @@ const ChatSessionDetail = () => {
   // 백엔드에서 해당 세션의 채팅 기록을 불러옵니다.
   useEffect(() => {
     console.log("useEffect");
-    fetch(`http://localhost:8000/sessions/${sessionId}`)
+    fetch(`http://backend-service:8000/sessions/${sessionId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.messages && data.messages.length > 0) {
@@ -53,7 +53,7 @@ const ChatSessionDetail = () => {
   // 사용자와 챗봇 메시지를 백엔드에 저장합니다.
   const sendMessage = async (message) => {
     try {
-      const response = await fetch('http://localhost:8000/model', {
+      const response = await fetch('http://backend-service:8000/model', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -72,14 +72,14 @@ const ChatSessionDetail = () => {
       setChatHistory((prev) => [...prev, msg_user, msg_bot]);
   
       // 백엔드에 사용자 메시지 저장
-      await fetch(`http://localhost:8000/sessions/${sessionId}/message`, {
+      await fetch(`http://backend-service:8000/sessions/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(msg_user),
       });
   
       // 백엔드에 챗봇 응답 저장
-      await fetch(`http://localhost:8000/sessions/${sessionId}/message`, {
+      await fetch(`http://backend-service:8000/sessions/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(msg_bot),

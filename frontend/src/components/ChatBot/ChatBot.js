@@ -36,7 +36,7 @@ const ChatBot = () => {
 
     const createSession = async (message) => {
         try {
-            const res = await fetch('http://localhost:8000/sessions', {
+            const res = await fetch('http://backend-service:8000/sessions', {
               method: 'POST',
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ user_id: user.user_id, header_message: message }),
@@ -45,7 +45,7 @@ const ChatBot = () => {
             setSessionId(data.session_id);
 
             // 세션 목록 업데이트
-            const sessionsRes = await fetch(`http://localhost:8000/sessions?user_id=${user.user_id}`);
+            const sessionsRes = await fetch(`http://backend-service:8000/sessions?user_id=${user.user_id}`);
             const sessionsData = await sessionsRes.json();
             dispatch(setSessions(sessionsData));
 

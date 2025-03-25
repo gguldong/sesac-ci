@@ -7,7 +7,7 @@ const useAuthStore = create((set) => ({
   // 로그인 상태 확인
   fetchUser: async () => {
     try {
-      const res = await axios.get("http://localhost:8000/me", {
+      const res = await axios.get("http://backend-service:8000/me", {
         withCredentials: true,
       });
       set({ user: res.data.user });
@@ -20,7 +20,7 @@ const useAuthStore = create((set) => ({
   login: async (user_id, password) => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/login",
+        "http://backend-service:8000/login",
         { user_id, password },
         { withCredentials: true }
       );
@@ -34,7 +34,7 @@ const useAuthStore = create((set) => ({
   // 로그아웃 요청
   logout: async () => {
     try {
-      await axios.get("http://localhost:8000/logout", {
+      await axios.get("http://backend-service:8000/logout", {
         withCredentials: true,
       });
       set({ user: null });
