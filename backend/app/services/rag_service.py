@@ -16,7 +16,7 @@ load_dotenv()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # RAG API 설정
-RAG_API_URL = os.getenv("RAG_API_URL", "http://llm:8001")  # 기본값은 localhost:8001
+RAG_API_URL = os.getenv("RAG_API_URL", "http://llm-service:8001")  # 기본값은 localhost:8001
 RAG_API_ENDPOINT = f"{RAG_API_URL}/api/rag"
 
 async def retrieve_rag_results(query: str, user_id: str = "default_user") -> Dict[str, Any]:

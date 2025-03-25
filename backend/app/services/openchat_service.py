@@ -7,7 +7,7 @@ import asyncio
 load_dotenv()
 
 # LLM 서비스 URL 설정
-LLM_SERVICE_URL = "http://llm:8002/generate"
+LLM_SERVICE_URL = "http://llm-service:8002/generate"
 
 async def request_openchat(message: str, conversation_history: str = "", rag_context: str = ""):
     try:
