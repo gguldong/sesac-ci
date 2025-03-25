@@ -35,8 +35,8 @@ COPY requirements.txt ./
 RUN pip install --upgrade pip && \
    pip install --no-cache-dir -r requirements.txt
 
-# llama-cpp-python 사전 빌드된 CUDA 버전 설치 (컴파일 오류 방지)
-RUN pip install --no-cache-dir llama-cpp-python-cuda==0.2.56 --prefer-binary
+# llama-cpp-python 설치 (CUDA 빌드 비활성화하여 컴파일 오류 방지)
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=OFF" pip install --no-cache-dir llama-cpp-python --prefer-binary
 
 # faiss-gpu를 CUDA 지원 버전으로 강제 재설치 (Python 3.10용)
 RUN pip install --force-reinstall --no-cache-dir faiss-gpu==1.7.2 --extra-index-url https://pypi.nvidia.com
