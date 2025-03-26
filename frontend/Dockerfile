@@ -28,7 +28,7 @@
 
 
 
-FROM node:23.7.0-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -38,9 +38,6 @@ RUN npm install
 
 # 모든 소스 파일 복사
 COPY . .
-
-# node_modules/.bin에 실행 권한 부여
-RUN chmod +x node_modules/.bin/*
 
 # 앱 빌드
 RUN npm run build
