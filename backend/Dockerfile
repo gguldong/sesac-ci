@@ -2,30 +2,38 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
+# 시스템 패키지 설치
 RUN apt-get update && apt-get install -y \
     mariadb-client \
     build-essential \
-    cmake \
-    git \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt ./
-
-# 필수 패키지만 직접 설치
+# 필수 Python 패키지 설치
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install numpy==1.24.4 && \
-    pip install fastapi==0.115.11 uvicorn==0.34.0 pydantic==2.10.6 python-dotenv==1.0.1 itsdangerous pydantic-settings bcrypt
+    pip install --no-cache-dir \
+    fastapi==0.115.11 \
+    uvicorn==0.34.0 \
+    pydantic==2.10.6 \
+    pydantic-settings==2.8.1 \
+    sqlalchemy==2.0.39 \
+    pymysql==1.1.1 \
+    python-dotenv==1.0.1 \
+    bcrypt==4.3.0 \
+    python-multipart==0.0.20 \
+    requests==2.32.3 \
+    httpx==0.28.1 \
+    openai==1.66.5 \
+    itsdangerous==2.2.0 \
+    email-validator==2.2.0 \
+    numpy==1.24.4
 
-# 다른 필수 패키지들을 개별적으로 설치 - 실패해도 계속 진행
-RUN pip install langchain==0.3.21 || true
-RUN pip install langchain-core==0.3.45 || true
-RUN pip install openai==1.66.5 || true
-RUN pip install SQLAlchemy==2.0.39 || true
-RUN pip install python-multipart==0.0.20 || true
-RUN pip install requests==2.32.3 || true
-RUN pip install pymysql || true
+# OpenAI 관련 패키지
+RUN pip install --no-cache-dir \
+    langchain==0.3.21 \
+    langchain-core==0.3.45 \
+    langchain-openai==0.3.9 || true
 
 # 애플리케이션 코드 복사
 COPY . .
