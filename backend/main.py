@@ -40,12 +40,12 @@ app.add_middleware(
 )
 
 # API 라우터 등록
-app.include_router(auth.router)
-app.include_router(chat.router)
-app.include_router(stt.router)
-app.include_router(favorites.router, prefix="/favorites", tags=["favorites"])
-
-
+app.include_router(auth.router, prefix="/api")
+app.include_router(chat.router, prefix="/api")
+app.include_router(stt.router, prefix="/api")
+# app.include_router(favorites.router, prefix="/favorites", tags=["favorites"])
+# app.include_router(favorites.router, prefix="/api", tags=["favorites"])
+app.include_router(favorites.router, prefix="/api/favorites", tags=["favorites"])
 # 내부 API 라우터 등록 - /internal 경로로 분리
 app.include_router(policy_classifier_api.router, prefix="/internal/policy", tags=["internal"])
 
