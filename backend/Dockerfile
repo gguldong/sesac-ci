@@ -77,8 +77,7 @@
 
 # # FastAPI 서버 실행
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-FROM python:3.10-slim
+FROM continuumio/minicondFROM python:3.10-slim
 
 WORKDIR /app
 
@@ -93,14 +92,18 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt ./
 
-# 문제 패키지를 제외한 requirements.txt 생성
-RUN grep -v "langchain-community\|llama-cpp-python\|mistral-common\|numba" requirements.txt > requirements_filtered.txt
+# 의존성 관리를 위한 스크립트 생성
+RUN echo "#!/bin/bash" > install_deps.sh && \
+    echo "pip install --no-cache-dir --upgrade pip" >> install_deps.sh && \
+    echo "pip install numpy==1.26.2" >> install_deps.sh && \
+    echo "pip install --no-deps langchain-community==0.3.20" >> install_deps.sh && \
+    echo "pip install --no-deps numba==0.60.0" >> install_deps.sh && \
+    echo "pip install --no-deps mistral-common==1.5.4" >> install_deps.sh && \
+    echo "pip install --no-deps llama-cpp-python==0.3.8" >> install_deps.sh && \
+    echo "pip install -r requirements.txt --ignore-installed" >> install_deps.sh && \
+    chmod +x install_deps.sh
 
-# 필터링된 패키지 설치
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir numpy==1.26.2 && \
-    pip install --no-cache-dir -r requirements_filtered.txt && \
-    pip install --no-cache-dir langchain-community==0.3.20 numba==0.60.0 mistral-common==1.5.4 llama-cpp-python==0.3.8
+RUN ./install_deps.sh
 
 COPY . .
 
