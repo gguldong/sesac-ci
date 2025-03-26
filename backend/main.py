@@ -19,7 +19,7 @@ from app.api import policy_classifier_api
 app = FastAPI()
 
 # CORS 설정
-origins = ["https://www.jungchat.shop", "http://www.jungchat.shop"]
+origins = ["https://www.jungchat.shop", "http://www.jungchat.shop", "http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
