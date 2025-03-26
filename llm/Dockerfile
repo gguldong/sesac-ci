@@ -49,7 +49,6 @@
 
 # # 컨테이너 실행 시, 두 스크립트를 백그라운드에서 동시에 실행하고 대기
 # CMD ["/bin/sh", "-c", "/app/run_llm_service.sh & /app/rag/run_api_server.sh && wait"]
-
 FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 # 대화형 프롬프트 비활성화 설정
@@ -65,6 +64,7 @@ RUN apt-get update && apt-get install -y \
    g++ \
    git \
    curl \
+   build-essential \
    && rm -rf /var/lib/apt/lists/*
 
 # pip 설치
@@ -122,8 +122,12 @@ RUN pip install --no-cache-dir \
    scikit-learn==1.6.1 \
    scipy==1.15.2
 
-# llama-cpp-python 설치 (CUDA 활성화)
-RUN CMAKE_ARGS="-DLLAMA_CUBLAS=ON" pip install --no-cache-dir llama-cpp-python==0.3.8 --prefer-binary
+# llama-cpp-python 설치 (CUDA 활성화) - 수정된 부분
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/* && \
+    CMAKE_ARGS="-DLLAMA_CUBLAS=ON" FORCE_CMAKE=1 pip install --no-cache-dir llama-cpp-python==0.3.8
 
 # 데이터베이스 관련
 RUN pip install --no-cache-dir \
@@ -145,6 +149,6 @@ RUN chmod +x /app/run_llm_service.sh /app/rag/run_api_server.sh
 
 # 포트 노출
 EXPOSE 8001
-#
+
 # 컨테이너 실행 시, 두 스크립트를 백그라운드에서 동시에 실행하고 대기
 CMD ["/bin/sh", "-c", "/app/run_llm_service.sh & /app/rag/run_api_server.sh && wait"]
