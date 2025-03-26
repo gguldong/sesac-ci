@@ -148,7 +148,7 @@ const PolicyCalendar = () => {
         }
         
         // 새로운 API 엔드포인트를 호출하여 즐겨찾기한 정책의 상세 정보 가져오기
-        const response = await fetch(`http://backend-service:8000/favorites/${userId}/calendar`);
+        const response = await fetch(`/api/favorites/${userId}/calendar`);
         if (!response.ok) throw new Error('즐겨찾기 정책 상세 정보 가져오기 실패');
         const policiesData = await response.json();
         

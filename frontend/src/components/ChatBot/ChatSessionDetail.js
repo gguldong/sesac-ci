@@ -34,7 +34,7 @@ const ChatSessionDetail = () => {
   // 백엔드에서 해당 세션의 채팅 기록을 불러옵니다.
   useEffect(() => {
     console.log("useEffect");
-    fetch(`http://backend-service:8000/sessions/${sessionId}`)
+    fetch(`/api/sessions/${sessionId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.messages && data.messages.length > 0) {
@@ -120,7 +120,7 @@ const ChatSessionDetail = () => {
   // 사용자의 즐겨찾기 목록 가져오기
   const fetchUserFavorites = async () => {
     try {
-      const response = await fetch(`http://backend-service:8000/favorites/${userId}`);
+      const response = await fetch(`/api/favorites/${userId}`);
       if (response.ok) {
         const data = await response.json();
         // 즐겨찾기된 정책 ID 목록 추출
@@ -137,7 +137,7 @@ const ChatSessionDetail = () => {
     try {
       if (favorites.includes(policyId)) {
         // 즐겨찾기 제거
-        const response = await fetch(`http://backend-service:8000/favorites/${userId}/${policyId}`, {
+        const response = await fetch(`/api/favorites/${userId}/${policyId}`, {
           method: 'DELETE'
         });
         
@@ -146,7 +146,7 @@ const ChatSessionDetail = () => {
         }
       } else {
         // 즐겨찾기 추가
-        const response = await fetch('http://backend-service:8000/favorites', {
+        const response = await fetch('/api/favorites', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -180,7 +180,7 @@ const ChatSessionDetail = () => {
       setIsLoading(true);
       
       // 백엔드에 사용자 메시지 저장
-      const userMsgResponse = await fetch(`http://backend-service:8000/sessions/${sessionId}/message`, {
+      const userMsgResponse = await fetch(`/api/sessions/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(msg_user),
@@ -201,7 +201,7 @@ const ChatSessionDetail = () => {
       }
       
       // 챗봇 응답 요청
-      const response = await fetch('http://backend-service:8000/model', {
+      const response = await fetch('/api/model', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -221,7 +221,7 @@ const ChatSessionDetail = () => {
       };
       
       // 백엔드에 챗봇 응답 저장 (정책 정보 포함)
-      const botMsgResponse = await fetch(`http://backend-service:8000/sessions/${sessionId}/message`, {
+      const botMsgResponse = await fetch(`/api/sessions/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

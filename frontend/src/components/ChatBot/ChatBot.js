@@ -36,7 +36,7 @@ const ChatBot = () => {
 
     const createSession = async (message) => {
         try {
-            const res = await fetch('http://backend-service:8000/sessions', {
+            const res = await fetch('/api/sessions', {
               method: 'POST',
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ user_id: user.user_id, header_message: message }),
@@ -45,7 +45,7 @@ const ChatBot = () => {
             setSessionId(data.session_id);
 
             // 세션 목록 업데이트
-            const sessionsRes = await fetch(`http://backend-service:8000/sessions?user_id=${user.user_id}`);
+            const sessionsRes = await fetch(`/api/sessions?user_id=${user.user_id}`);
             const sessionsData = await sessionsRes.json();
             dispatch(setSessions(sessionsData));
 
@@ -67,7 +67,7 @@ const ChatBot = () => {
         navigate(`/chat/${currentSessionId}`);
 
         // try {
-        //     const response = await fetch('http://backend-service:8000/model', {
+        //     const response = await fetch('/api/model', {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
@@ -91,13 +91,13 @@ const ChatBot = () => {
         //     setChatHistory(prev => [...prev, msg_user, msg_bot]);
 
         //     //백엔드에 저장
-        //     await fetch(`http://backend-service:8000/sessions/${currentSessionId}/message`, {
+        //     await fetch(`/api/sessions/${currentSessionId}/message`, {
         //       method: 'POST',
         //       headers: { 'Content-Type': 'application/json' },
         //       body: JSON.stringify(msg_user),
         //     });
 
-        //     await fetch(`http://backend-service:8000/sessions/${currentSessionId}/message`, {
+        //     await fetch(`/api/sessions/${currentSessionId}/message`, {
         //       method: 'POST',
         //       headers: { 'Content-Type': 'application/json' },
         //       body: JSON.stringify(msg_bot),

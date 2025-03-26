@@ -41,7 +41,7 @@ export default function SignUp1() {
     };
     try {
       // 백엔드로 전송
-      const response = await axios.post('http://backend-service:8000/submit', formData);
+      const response = await axios.post('/api/submit', formData);
       console.log("서버 응답:", response.data);
       alert("회원가입 완료!");
 
