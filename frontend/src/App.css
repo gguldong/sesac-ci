@@ -1,4 +1,21 @@
 @import "tailwindcss";
+
+/* 전체 HTML 및 Body 스타일 */
+html, body, #root {
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto; /* hidden에서 auto로 변경 */
+}
+
+/* 회원가입 페이지 스타일 */
+.signup-container {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
+
 /*.App {
   font-family: Arial, sans-serif;
 }
@@ -85,9 +102,13 @@
 /* 전체 레이아웃 */
 .layout-container {
   display: flex;
-  height: calc(100vh - 70px);/* 헤더 높이 제외 */
+  height: 100%;
+  min-height: 100vh;
   width: 100%;
   margin: 0 auto;
+  padding-top: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* 🔹 사이드바 스타일 */
@@ -120,7 +141,7 @@
 /* 사이드바 토글 버튼 */
 .sidebar-toggle {
   position: absolute;
-  top: 5%;   /* 사이드바의 맨 위에서 10px 내려옴 */
+  top: 7%;   /* 사이드바의 맨 위에서 10px 내려옴 */
   left: 90%; /* 사이드바의 오른쪽에서 10px 띄움 */
   transform: translate(-50%, -50%);
 
@@ -140,7 +161,7 @@
 .sidebar-toggle.closed {
   background-image: url('../public/arrow_right.svg'); /* 사이드바가 닫혀 있을 때 이미지 */
   position: absolute;
-  top: 5%;   
+  /* top: 5%;    */
   left: 50%; 
   transform: translate(-50%, -50%);
 }
@@ -154,21 +175,22 @@
 /* 로고 영역 전체 */
 .sidebar-logo {
   position: absolute;
-  top: 5%;   
-  left: 50%;     
+  top: 7%;   
+  left: 30%;     
   transform: translate(-50%, -50%);
-  width: 50px;         /* 로고 영역 너비 */
-  height: 50px;        /* 로고 영역 높이 */
-  background-image: url('../public/logo192.png'); /* public 폴더에 있는 파일, 경로 앞에 슬래시 필요 */
+  width: 85px;         /* 로고 영역 너비 */
+  height: 85px;        /* 로고 영역 높이 */
+  background-image: url('../public/Fundit_logo.png'); /* public 폴더에 있는 파일, 경로 앞에 슬래시 필요 */
   background-repeat: no-repeat;          /* 반복 없이 */
   background-position: center;           /* 중앙 정렬 */
-  background-size: contain;              /* 요소 안에 맞게 크기 조절 (비율 유지) */
+  background-size: contain;  
+  cursor: pointer;            /* 요소 안에 맞게 크기 조절 (비율 유지) */
 }
 
 .new-chat-button {
   position: absolute;
   display: block;
-  top: 9%;
+  top: 11%;
   width: 240px;
   height: 70px;
   text-align: center;
@@ -194,7 +216,7 @@
 
 .new-chat-button-mini {
   position: absolute;
-  top: 12%;   /* 사이드바의 맨 위에서 10px 내려옴 */
+  top: 13.5%;   /* 사이드바의 맨 위에서 10px 내려옴 */
   left: 50%; /* 사이드바의 오른쪽에서 10px 띄움 */
   transform: translate(-50%, -50%);
   width: 20px; /* 버튼의 너비 */
@@ -270,9 +292,12 @@
   flex: 1;
   padding: 0px;
   background-color: #8aff0400;
-  overflow-y: auto;
+  overflow-y: hidden;
   border-radius: 0px;
   margin: 0px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 🔹 카드 리스트 */

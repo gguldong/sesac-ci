@@ -41,7 +41,7 @@ export default function SignUp1() {
     };
     try {
       // 백엔드로 전송
-      const response = await axios.post('http://localhost:8000/submit', formData);
+      const response = await axios.post('http://backend-service:8000/submit', formData);
       console.log("서버 응답:", response.data);
       alert("회원가입 완료!");
 
@@ -66,7 +66,7 @@ export default function SignUp1() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="signup-container bg-white">
       <form onSubmit={handleFormSubmit} className="max-w-3xl mx-auto px-4 py-8 space-y-8">
         <div className="space-y-8">
           {/* 거주 지역 섹션 */}

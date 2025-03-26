@@ -33,7 +33,7 @@ export const handleMicrophoneClick = (setCurrentMessage) => {
                     const formData = new FormData();
                     formData.append('audio', audioBlob, 'recording.wav');
 
-                    fetch('http://localhost:8000/upload-audio/', {
+                    fetch('http://backend-service:8000/upload-audio/', {
                         method: 'POST',
                         body: formData
                     })

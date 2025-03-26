@@ -1,0 +1,694 @@
+/* 전체 컨테이너 스타일 */
+.policy-calendar-container {
+  display: flex;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #00316B;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+}
+
+/* 사이드바 스타일 - App.css와 통일 */
+.sidebar-calendar {
+  width: 400px;
+  background-color: #fefefe;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 0px;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  transition: width 0.2s ease;
+  transform: translateX(0);
+  position: relative;
+  overflow-y: scroll;
+  max-height: 100vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Firefox에서 스크롤바 숨기기 */
+.sidebar-calendar::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.fundint-logo-image {
+  width: 120px;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+/* 사이드바 제목 스타일 */
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px 0;
+  color: #4BA6F7;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  width: 90%;
+  text-align: center;
+}
+
+.policy-box-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 78vh;
+  overflow-y: auto;
+  margin-bottom: 5px;
+  padding-right: 5px;
+  gap: 8px;
+  background-color: #f4f4f400;
+}
+
+/* 정책 박스 스타일 */
+.policy-box {
+  background-color: white;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+  border-left: 4px solid transparent;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+  max-height: 95px;
+  min-width: 250px;
+  opacity: 0.7; /* 기본 상태에서는 약간 흐리게 표시 */
+}
+
+.policy-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  opacity: 1; /* 호버 시 완전 불투명하게 */
+}
+
+/* 현재 월에 해당하는 정책 강조 표시 */
+.policy-box.current-month {
+  opacity: 1;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  border-left-width: 6px; /* 왼쪽 테두리 더 굵게 */
+  font-weight: 500; /* 글꼴 약간 더 굵게 */
+  order: -1; /* 목록 맨 위로 이동 */
+}
+
+/* 다양한 유형의 정책 박스 스타일 */
+.policy-box.여유있는-정책 {
+  border-left-color: #4BA6F7;
+}
+
+.policy-box.마감-임박-정책 {
+  border-left-color: #F7684B;
+}
+
+.policy-box.종료된-정책 {
+  border-left-color: #BBBBBB;
+  color: #888;
+}
+
+.policy-box .policy-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 3px;
+  color: #00316B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.policy-box .policy-content {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.policy-box .application-period-info {
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.policy-box .application-period-text {
+  margin-left: 4px;
+  font-size: 11px;
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.no-policies {
+  padding: 15px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  background-color: rgba(240, 245, 255, 0.5);
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.loading {
+  padding: 15px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+/* 정책 정보 레이블 */
+.policy-info {
+  margin-top: auto;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  background-color: rgba(240, 245, 255, 0.7);
+  padding: 7px;
+  border-radius: 8px;
+  width: 90%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.policy-info div {
+  display: flex;
+  align-items: center;
+}
+
+.policy-info .policy-types-row,
+.policy-info .application-types-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.policy-info .policy-types-row > div,
+.policy-info .application-types-row > div {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.policy-info span {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.application-info-divider {
+  height: 1px;
+  background-color: rgba(0, 49, 107, 0.1);
+  margin: 4px 0;
+  width: 100%;
+}
+
+.application-type-heading {
+  font-weight: 600;
+  color: #00316B;
+  margin-bottom: 3px;
+  font-size: 11px;
+  padding-left: 2px;
+}
+
+.relaxed-icon {
+  background-color: #4BA6F7;
+}
+
+.urgent-icon {
+  background-color: #F7684B;
+}
+
+.ended-icon {
+  background-color: #BBBBBB;
+}
+
+/* 캘린더 영역 스타일 */
+.calendar {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+#currentMonthYear {
+  font-size: 24px;
+  font-weight: 700;
+  color: #00316B;
+}
+
+.button-container {
+  margin-left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.button-container button {
+  background-color: #4BA6F7;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button-container button:hover {
+  background-color: #3d8ed8;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 캘린더 그리드 스타일 */
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+  flex: 1;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-weight: 600;
+  padding: 10px;
+  border-bottom: 2px solid #f0f0f0;
+  font-size: 16px;
+  color: #00316B;
+}
+
+.calendar-weekday:first-child {
+  color: #F7684B;
+}
+
+.calendar-day {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 16px;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: default;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  color: #00316B;
+}
+
+.calendar-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.inactive {
+  background-color: #f9f9f9;
+  color: #ccc;
+  box-shadow: none;
+}
+
+.calendar-day.inactive:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.calendar-day.today {
+  border: 2px solid #4BA6F7;
+  font-weight: 700;
+  color: #4BA6F7;
+}
+
+/* 정책 종류별 캘린더 날짜 스타일 */
+.calendar-day.policy-여유있는-정책 {
+  background-color: rgba(75, 166, 247, 0.2);
+  border: 1px solid rgba(75, 166, 247, 0.3);
+}
+
+.calendar-day.policy-마감-임박-정책 {
+  background-color: rgba(247, 104, 75, 0.2);
+  border: 1px solid rgba(247, 104, 75, 0.3);
+}
+
+.calendar-day.policy-종료된-정책 {
+  background-color: rgba(187, 187, 187, 0.2);
+  border: 1px solid rgba(187, 187, 187, 0.3);
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+  .policy-calendar-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    max-height: 40vh;
+    margin-bottom: 20px;
+  }
+  
+  .policy-box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  
+  .calendar {
+    padding: 20px;
+  }
+  
+  .calendar-days {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-days {
+    gap: 5px;
+  }
+  
+  .calendar-day {
+    height: 50px;
+    font-size: 14px;
+  }
+  
+  .calendar-weekday {
+    font-size: 14px;
+  }
+  
+  #currentMonthYear {
+    font-size: 20px;
+  }
+  
+  .policy-box {
+    font-size: 13px;
+    padding: 10px;
+  }
+  
+  .sidebar-title {
+    font-size: 16px;
+  }
+  
+  .policy-info {
+    font-size: 12px;
+  }
+}
+
+/* 로그인 안내 메시지 스타일 */
+.login-notice {
+  background-color: rgba(240, 245, 255, 0.8);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  border: 1px solid #d1e9ff;
+  width: 90%;
+}
+
+.login-notice p {
+  margin-bottom: 10px;
+  color: #00316B;
+  font-size: 13px;
+}
+
+.login-button {
+  display: inline-block;
+  background-color: #4BA6F7;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-button:hover {
+  background-color: #3d8ed8;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* 신청기한 유형 배지 스타일 */
+.application-period-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 4px;
+  white-space: nowrap;
+  height: 18px;
+  
+}
+
+/* 상시 신청 배지 */
+.badge-permanent {
+  background-color: rgba(75, 166, 247, 0.2);
+  color: #4BA6F7;
+  border: 1px solid rgba(75, 166, 247, 0.3);
+  width: 20px;
+}
+
+/* 조건부 신청 배지 */
+.badge-conditional {
+  background-color: rgba(128, 0, 128, 0.2);
+  color: #800080;
+  border: 1px solid rgba(128, 0, 128, 0.3);
+  width: 20px;
+
+}
+
+/* 정기 신청 배지 */
+.badge-regular {
+  background-color: rgba(255, 153, 0, 0.2);
+  color: #ff9900;
+  border: 1px solid rgba(255, 153, 0, 0.3);
+  width: 20px;
+
+}
+
+/* 규정 참조 배지 */
+.badge-regulation {
+  background-color: rgba(128, 128, 128, 0.2);
+  color: #808080;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  width: 20px;
+
+}
+
+/* 기간 신청 배지 */
+.badge-period {
+  background-color: rgba(0, 128, 0, 0.2);
+  color: #008000;
+  border: 1px solid rgba(0, 128, 0, 0.3);
+  width: 20px;
+
+}
+
+/* 기본 배지 */
+.badge-default {
+  background-color: rgba(187, 187, 187, 0.2);
+  color: #666;
+  border: 1px solid rgba(187, 187, 187, 0.3);
+}
+
+/* 달력에 유형 표시 */
+.calendar-day .application-type-indicator {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.calendar-day .application-type-permanent {
+  background-color: #4BA6F7;
+}
+
+.calendar-day .application-type-conditional {
+  background-color: #800080;
+}
+
+.calendar-day .application-type-regular {
+  background-color: #ff9900;
+}
+
+.calendar-day .application-type-regulation {
+  background-color: #808080;
+}
+
+.calendar-day .application-type-period {
+  background-color: #008000;
+}
+
+/* 정책 상자에 신청기한 유형 표시 */
+.policy-box .application-period-info {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.policy-box .application-period-text {
+  margin-left: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 정책 상세 정보 모달 스타일 */
+.policy-calendar-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.policy-calendar-modal {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-calendar-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+.policy-calendar-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.policy-calendar-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.policy-calendar-modal-close-btn:hover {
+  color: #000;
+}
+
+.policy-calendar-modal-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.policy-calendar-modal-content > div {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.policy-calendar-modal-content span {
+  display: inline-block;
+}
+
+.policy-calendar-modal-content span:first-child {
+  font-weight: bold;
+  margin-right: 8px;
+  width: 80px;
+  vertical-align: top;
+}
+
+.policy-calendar-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+}
+
+.policy-calendar-apply-button {
+  background-color: #3d7cf9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.policy-calendar-apply-button:hover {
+  background-color: #2a5bb9;
+}
+
+.policy-calendar-close-button {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.policy-calendar-close-button:hover {
+  background-color: #ccc;
+}
+
+.policy-calendar-no-url-hint {
+  color: #888;
+  font-style: italic;
+  margin-right: auto;
+}
+
+.policy-calendar-text-with-newlines {
+  white-space: pre-line;
+} 

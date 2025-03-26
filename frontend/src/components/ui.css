@@ -1,0 +1,25 @@
+/* 메인 페이지 이미지 컨테이너 */
+.main-image-container {
+    position: absolute;
+    right: 15%;
+    top: 50%;
+    transform: translateY(-50%); /* X축, Y축 모두 중앙 정렬 */
+  }
+  
+  /* 메인 이미지 스타일 */
+  .main-image {
+    width: auto;
+    height: 650px;
+  }
+  
+  /* 반응형 처리 */
+  @media (max-width: 1200px) {
+    /* .main-image-container {
+      display: none;
+    } */
+    .main-image {
+      width: auto;
+      height: 300px;
+    }
+  }
+  

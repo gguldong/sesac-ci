@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import '../../output.css';
-import useAuthStore from "../../components/context/authStore.js";
+import useAuthStore from "../context/authStore.js";
 
 
 const MyPage = () => {

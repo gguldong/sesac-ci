@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import ChatBot from "./components/ChatBot/ChatBot.js";
-import ChatSessionDetail from "./components/ChatBot/ChatSessionDetail";
+import ChatSessionDetail from "./components/ChatBot/ChatSessionDetail.js";
 import Layout from "./components/ChatBot/Layout.js";
-import Header from "./components/ui/Header";
-import LoginForm from "./components/signUp/LoginForm";
-import SignUp0 from "./components/signUp/SignUp0";
-import SignUp1 from "./components/signUp/SignUp1";
-import SignUp3 from "./components/signUp/SignUp3";
-import MainPage from "./components/ChatBot/MainPage";
-import MyPage from "./components/mypage/MyPage";
+import Header from "./components/ui/Header.jsx";
+import LoginForm from "./components/signUp/LoginForm.jsx";
+import SignUp0 from "./components/signUp/SignUp0.jsx";
+import SignUp1 from "./components/signUp/SignUp1.jsx";
+import SignUp3 from "./components/signUp/SignUp3.jsx";
+import MainPage from "./components/ChatBot/MainPage.jsx";
+import MyPage from "./components/mypage/MyPage.jsx";
+import FunditIntroReact from "./components/fundit_intro/fundit_intro_react.js";
 import useAuthStore from "./components/context/authStore.js";
 //redux
 import { Provider } from 'react-redux';
-import store from './components/redux/store'; // store.js의 경로에 맞게 수정
+import store from './components/redux/store.js'; // store.js의 경로에 맞게 수정
 import "./App.css";
+import PolicyCalendar from './components/PolicyCalendar/PolicyCalendar.js';
 
 // 🔒 로그인 필수 페이지 보호 (PrivateRoute)
 const PrivateRoute = ({ element }) => {
@@ -80,6 +82,8 @@ function App() {
           <Route path="signup1" element={<SignUp1 />} />
           <Route path="signup3" element={<SignUp3 />} />
           <Route path="mypage" element={<PrivateRoute element={<MyPage />} />} />
+          <Route path="services" element={<FunditIntroReact />} />
+          <Route path="/calendar" element={<PolicyCalendar />} />
         </Routes>
       </Router>
     </Provider>

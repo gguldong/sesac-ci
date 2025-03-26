@@ -1,250 +1,820 @@
+/* 모든 요소의 기본 마진, 패딩 초기화 */
+* {
+  box-sizing: border-box;
+}
+
 /* ============================== */
 /* PC(기본) 스타일 - 원본 유지    */
 /* ============================== */
 
 /* 전체 컨테이너 */
 .chatbot-container {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    height: 90vh;
-    max-width: 60vw;
-    margin: 0 auto;  /* 좌우 자동 마진으로 중앙 배치 */
-    background-color: #c12c2c00;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #333;
-  }
-  
-  /* 메시지 영역 */
-  .messages {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: #04ea6c00;
-  }
-  
-  /* 메시지 스타일 */
-  .message {
-    margin-bottom: 12px;
-    padding: 10px 14px;
-    border-radius: 20px;
-    max-width: 100%;
-    word-wrap: break-word;
-    font-size: 1rem;
-    color: #00316B;
-  }
-  .message.bot {
-    background-color: #fff1f100;
-    align-self: flex-start;
-  }
-  .message.user {
-    color: #4BA6F7;
-    background-color: #7272720b;
-    align-self: flex-end;
-  }
-  
-  /* 예시 질문 컨테이너 */
-  .example-questions {
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, auto);
-    gap: 20px;
-    padding: 15px;
-    background-color: #0628e800;
-  }
-  
-  /* 예시 질문 아이템 */
-  .example-question-item {
-    background-color: #ffffff;
-    border: 1px solid #00eaff;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  .example-question-item:hover {
-    background-color: #e6e6e6;
-  }
-  
-  /* 입력 영역: 초기에는 중앙 위치 */
-  .input-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    padding: 12px;
-    border-top: 1px solid #ffffff00;
-    background-color: #d5282800;
-    width: 70%;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  /* 채팅 시작 후 하단으로 이동 */
-  .input-container.chat-started {
-    position: absolute;
-    top: 95%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    padding: 12px;
-    border-top: 1px solid #ffffff00;
-    background-color: #5d5d5d00;
-    width: 70%;
-  }
-  
-  /* 텍스트 입력 필드 */
-  .input-container input {
-    flex: 1;
-    padding: 10px 10px 10px 50px; /* 상, 우, 하, 좌 순서 */
-    font-size: 1rem;
-    border: 1px solid #e9717100;
-    border-radius: 15px;
-    outline: none;
-    transition: border-color 0.3s ease;
-    background-color: #f4f4f4; 
-  }
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #02779700;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+  overflow: hidden;
+}
 
-  .input-container input:focus {
-    border-color: #4ca6f7;
-  }
-  
-  /* 전송 버튼(아이콘) */
-  .input-container .send-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 10px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 20px;
-    background-color: rgba(33, 150, 243, 0.0);
-    background-image: url('../../../public/sent_icon.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 24px 24px;
-    color: transparent;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .input-container .microphone-button {
-    position: absolute;
-    left: 25px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 24px; /* 버튼 크기 조정 */
-    height: 24px;
-    background-image: url('../../../public/mic.png'); /* 배경 이미지 설정 */
-    background-size: 20px 29px; /* 이미지 크기 조정 */
-    background-repeat: no-repeat; /* 이미지 반복 방지 */
-    background-position: center; /* 이미지 중앙 정렬 */
-    color: transparent;
-    border: none; /* 버튼 테두리 제거 */
-    cursor: pointer; /* 커서 모양 변경 */
-  }
+/* 메시지 영역 */
+.messages {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  height: calc(100vh - 80px); /* 입력창 공간 고려 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #4400c300;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 80px;
+  width: 100%;
+  max-width: 100%;
+}
 
-  /* 마이크 버튼의 녹음 중 상태 스타일 */
-  .input-container .microphone-button.recording {
-    background-color: #ff4c4c; /* 녹음 중일 때 빨간색 배경 */
-    border-radius: 30%; /* 원형으로 만들기 */
-    box-shadow: 0 0 0 rgba(255, 76, 76, 0.4); /* 초기 그림자 없음 */
-    animation: pulse 1.5s infinite; /* 맥동 애니메이션 적용 */
-  }
+/* 메시지 컨테이너 내부 요소 정렬 */
+.messages > div {
+  margin: 4px 8px;
+}
+
+/* 첫 번째 메시지의 상단 여백 제거 */
+.messages > div:first-of-type {
+  margin-top: 0;
+}
+
+/* 스크롤을 위한 마지막 요소 */
+.messages > div:last-child {
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* 메시지 스타일 */
+.message {
+  padding: 10px 14px;
+  border-radius: 20px;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-size: 1rem;
+  color: #00316B;
+}
+
+.message.bot {
+  background-color: #fff1f100;
+  align-self: flex-start;
+}
+.message.user {
+  color: #4BA6F7;
+  background-color: #7272720b;
+  align-self: flex-end;
+  max-width: 45%;
+}
+
+/* 예시 질문 컨테이너 */
+.example-questions {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 20px;
+  padding: 15px;
+  background-color: #0628e800;
+}
+
+/* 예시 질문 아이템 */
+.example-question-item {
+  background-color: #ffffff;
+  border: 1px solid #4BA6F7;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.example-question-item:hover {
+  background-color: #e6e6e6;
+}
+
+/* 정책 목록 컨테이너 스타일 */
+.policy-list-container {
+  margin-top: 12px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 10px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-bottom: 15px; /* 하단 여백 추가 */
+}
+
+.policy-list-container h4 {
+  margin: 0 0 8px 0;
+  color: #0056b3;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* 스크롤 가능한 정책 목록 */
+.policy-list {
+  max-height: 600px; /* 기존 400px에서 600px로 증가 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: rgba(240, 245, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+/* 각 정책 아이템 */
+.policy-item {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.policy-item:last-child {
+  border-bottom: none;
+}
+
+.policy-item:hover {
+  background-color: rgba(220, 230, 250, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.policy-item:active {
+  transform: translateY(0);
+}
+
+/* 정책 헤더 스타일 - 제목과 즐겨찾기 버튼 배치 */
+.policy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+/* 정책 제목 스타일 조정 */
+.policy-item h5 {
+  margin: 0;
+  color: #0056b3;
+  font-size: 16px;
+  flex: 1;
+}
+
+/* 정책 설명 스타일 */
+.policy-item p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 정책 정보 항목 스타일 */
+.policy-support-type,
+.policy-selection-criteria,
+.policy-application-method,
+.policy-required-documents,
+.policy-application-office,
+.policy-contact-info,
+.policy-legal-basis,
+.policy-online-application,
+.policy-no-application,
+.policy-eligibility,
+.policy-benefits {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #666;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.policy-support-type span,
+.policy-selection-criteria span,
+.policy-application-method span,
+.policy-required-documents span,
+.policy-application-office span,
+.policy-contact-info span,
+.policy-legal-basis span,
+.policy-online-application span,
+.policy-no-application span,
+.policy-eligibility span,
+.policy-benefits span {
+  font-weight: bold;
+  color: #444;
+}
+
+/* 정책 정보 항목의 소제목 스타일 */
+/* 메인 카테고리(지원 대상, 지원 내용) */
+.policy-eligibility span:first-child,
+.policy-benefits span:first-child {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0056b3;
+  margin-right: 5px;
+}
+
+/* 나머지 소제목 스타일 */
+.policy-support-type span:first-child,
+.policy-selection-criteria span:first-child,
+.policy-application-method span:first-child,
+.policy-required-documents span:first-child,
+.policy-application-office span:first-child,
+.policy-contact-info span:first-child,
+.policy-legal-basis span:first-child,
+.policy-online-application span:first-child,
+.policy-no-application span:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-right: 5px;
+}
+
+.policy-online-application a {
+  color: #4BA6F7;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.policy-online-application a:hover {
+  text-decoration: underline;
+}
+
+/* 스크롤바 커스터마이징 */
+.policy-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.policy-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.policy-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.policy-list::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* 입력 영역: 초기에는 중앙 위치 */
+.input-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #ffffff00;
+  background-color: #d5282800;
+  width: 70%;
+  transition: all 0.2s ease-in-out;
+}
+
+/* 채팅 시작 후 하단으로 이동 */
+.input-container.chat-started {
+  position: absolute;
+  top: 95%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #ffffff00;
+  background-color: #5d5d5d00;
+  width: 70%;
+}
+
+/* 텍스트 입력 필드 */
+.input-container input {
+  flex: 1;
+  padding: 10px 10px 10px 50px; /* 상, 우, 하, 좌 순서 */
+  font-size: 1rem;
+  border: 1px solid #e9717100;
+  border-radius: 15px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background-color: #f4f4f4; 
+}
+
+.input-container input:focus {
+  border-color: #4ca6f7;
+}
+
+/* 전송 버튼(아이콘) */
+.input-container .send-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 20px;
+  background-color: rgba(33, 150, 243, 0.0);
+  background-image: url('../../../public/sent_icon.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px 24px;
+  color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.input-container .microphone-button {
+  position: absolute;
+  left: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px; /* 버튼 크기 조정 */
+  height: 24px;
+  background-image: url('../../../public/mic.png'); /* 배경 이미지 설정 */
+  background-size: 20px 29px; /* 이미지 크기 조정 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  background-position: center; /* 이미지 중앙 정렬 */
+  color: transparent;
+  border: none; /* 버튼 테두리 제거 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
+
+/* 마이크 버튼의 녹음 중 상태 스타일 */
+.input-container .microphone-button.recording {
+  background-color: #ff4c4c; /* 녹음 중일 때 빨간색 배경 */
+  border-radius: 30%; /* 원형으로 만들기 */
+  box-shadow: 0 0 0 rgba(255, 76, 76, 0.4); /* 초기 그림자 없음 */
+  animation: pulse 1.5s infinite; /* 맥동 애니메이션 적용 */
+}
 
 /* 맥동 효과를 위한 애니메이션 */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 76, 76, 0.4);
+      box-shadow: 0 0 0 0 rgba(255, 76, 76, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(255, 76, 76, 0);
+      box-shadow: 0 0 0 10px rgba(255, 76, 76, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 76, 76, 0);
+      box-shadow: 0 0 0 0 rgba(255, 76, 76, 0);
   }
 }
 
+.input-container .send-button:hover {
+  background-color: #e6e6e65d;
+}
 
-  .input-container .send-button:hover {
-    background-color: #e6e6e65d;
-  }
-
-  .input-container .microphone-button:hover {
-    background-color: #e6e6e6;
-  }
+.input-container .microphone-button:hover {
+  background-color: #e6e6e6;
+}
 
 /* recording 클래스가 적용된 마이크 버튼에는 호버 효과 제거 */
 .input-container .microphone-button.recording:hover {
   background-color: #ff4c4c; /* 녹음 중 배경색 유지 */
 }
 
+/* 안내 문구(채팅 시작 전) */
+.intro-text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin: 0px 0px;
+  font-size: 2rem;
+  line-height: 1.4;
+}
 
-  /* 안내 문구(채팅 시작 전) */
-  .intro-text {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    margin: 0px 0px;
-    font-size: 2rem;
-    line-height: 1.4;
-  }
-  
-  /* ============================== */
-  /* 모바일/태블릿용 미디어 쿼리    */
-  /* (너비 768px 이하)             */
-  /* ============================== */
-  @media (max-width: 768px) {
-  
-    /* 전체 높이 조금 줄임 (예: 80vh) 혹은 그대로 유지 가능 */
-    .chatbot-container {
+/* ============================== */
+/* 모바일/태블릿용 미디어 쿼리    */
+/* (너비 768px 이하)             */
+/* ============================== */
+@media (max-width: 768px) {
+  /* 전체 높이 조금 줄임 (예: 80vh) 혹은 그대로 유지 가능 */
+  .chatbot-container {
       height: 80vh; 
-    }
-  
-    /* 메시지 영역 패딩 축소, 글씨크기 약간 조정 */
-    .messages {
+  }
+
+  /* 메시지 영역 패딩 축소, 글씨크기 약간 조정 */
+  .messages {
       padding: 10px;
-    }
-    .message {
+  }
+  .message {
       font-size: 0.9rem;
-    }
-  
-    /* 예시 질문: 2열 -> 1열로 전환해도 좋음 */
-    .example-questions {
+  }
+
+  /* 예시 질문: 2열 -> 1열로 전환해도 좋음 */
+  .example-questions {
       grid-template-columns: 1fr;   /* 1열 */
       grid-template-rows: repeat(6, auto); /* 6행 */
       top: 60%;  /* 조금 더 위아래 위치 조정 가능 */
-    }
-  
-    /* 입력창 크기 축소 */
-    .input-container,
-    .input-container.chat-started {
+  }
+
+  /* 입력창 크기 축소 */
+  .input-container,
+  .input-container.chat-started {
       width: 80%;                   /* 기존 50% -> 80% */
       padding: 8px;                 /* 패딩 축소 */
       top: 90%;                     /* 채팅 시작 후 하단 위치 살짝 조정 */
-    }
-  
-    /* 전송 버튼 위치/크기 조정 */
-    .input-container button {
+  }
+
+  /* 전송 버튼 위치/크기 조정 */
+  .input-container button {
       right: 8px;   /* 너무 왼쪽으로 가면 입력창과 겹칠 수 있음 */
       padding: 8px;
       background-size: 20px 20px; /* 아이콘 조금 줄임 */
-    }
-  
-    /* 안내 문구 글씨 조금 줄이기 */
-    .intro-text {
+  }
+
+  /* 안내 문구 글씨 조금 줄이기 */
+  .intro-text {
       font-size: 1.5rem; /* 기존 2rem -> 1.5rem */
       top: 25%;
-    }
   }
-  
+}
+
+/* 로딩 인디케이터 스타일 */
+.loading-indicator {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  background-color: #A9A9A9;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: dotPulse 1.5s infinite ease-in-out;
+}
+
+.dot1 {
+  animation-delay: 0s;
+}
+
+.dot2 {
+  animation-delay: 0.3s;
+}
+
+.dot3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+      transform: scale(0.8);
+      opacity: 0.6;
+  }
+  50% {
+      transform: scale(1.2);
+      opacity: 1;
+  }
+}
+
+.message.loading {
+  max-width: 70%;
+  align-self: flex-start;
+  margin-left: 10px;
+  background-color: #f0f0f0;
+  border-radius: 16px 16px 16px 0;
+  padding: 3px;
+}
+
+/* 클릭 힌트 스타일 */
+.click-hint {
+  color: #4BA6F7;
+  font-size: 11px;
+  margin-left: 5px;
+  font-style: italic;
+}
+
+/* 정책 온라인 신청 스타일 수정 */
+.policy-online-application {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+.policy-online-application span:first-child {
+  color: #4BA6F7;
+  font-weight: 600;
+}
+
+/* 정책 아이템 - 클릭 가능 여부에 따른 스타일 */
+.policy-item.clickable {
+  cursor: pointer;
+}
+
+.policy-item.not-clickable {
+  cursor: default;
+}
+
+/* URL이 없을 때 피드백 애니메이션 */
+.policy-item.no-url-feedback {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  background-color: rgba(255, 241, 240, 0);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* 온라인 신청 불가 스타일 */
+.policy-no-application {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+  color: #888;
+}
+
+.no-url-hint {
+  color: #888;
+  font-size: 11px;
+  margin-left: 5px;
+  font-style: italic;
+}
+
+.policy-no-application span:first-child {
+  color: #888;
+  font-weight: 600;
+}
+
+/* 클릭 가능한 정책과 불가능한 정책의 시각적 차이 */
+.policy-item.clickable:hover {
+  background-color: rgba(220, 230, 250, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.policy-item.not-clickable:hover {
+  background-color: rgba(240, 240, 240, 0.7);
+  transform: none;
+  box-shadow: none;
+}
+
+/* 줄바꿈 처리를 위한 스타일 */
+.text-with-newlines {
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.policy-content {
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 상세 정보 버튼 스타일 */
+.detail-button {
+  display: block;
+  margin: 10px 0;
+  padding: 8px 12px;
+  background-color: #f0f5ff;
+  color: #0056b3;
+  border: 1px solid #c0d6f9;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.detail-button:hover {
+  background-color: #e0ecff;
+  transform: translateY(-1px);
+}
+
+.detail-button:active {
+  transform: translateY(0);
+}
+
+/* 정책 상세 정보 모달 오버레이 */
+.policy-detail-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+/* 정책 상세 정보 모달 */
+.policy-detail-modal {
+  background-color: white;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 1000px;
+  max-height: 80vh;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f5f8ff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #0056b3;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #777;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  color: #333;
+}
+
+/* 모달 컨텐츠 */
+.modal-content {
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+.modal-content p {
+  margin-top: 0;
+  margin-bottom: 15px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.modal-content .policy-support-type,
+.modal-content .policy-selection-criteria,
+.modal-content .policy-application-method,
+.modal-content .policy-required-documents,
+.modal-content .policy-application-office,
+.modal-content .policy-contact-info,
+.modal-content .policy-legal-basis {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 모달 푸터 */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid #e0e0e0;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.apply-button {
+  padding: 8px 16px;
+  background-color: #4BA6F7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.apply-button:hover {
+  background-color: #3d8ed8;
+}
+
+.close-button {
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #e0e0e0;
+}
+
+.modal-hint {
+  margin: 0;
+  padding: 8px 0;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .policy-detail-modal {
+      width: 90%;
+      max-height: 90vh;
+  }
+}
+
+/* 메시지 컨테이너 내부 요소 정렬 */
+.message-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 즐겨찾기 버튼 스타일 */
+.favorite-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 10px;
+  font-size: 18px;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-button:hover {
+  transform: scale(1.2);
+}
+
+.favorite-icon {
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.favorite-icon.active {
+  color: #FFD700; /* 골드 색상으로 활성화된 즐겨찾기 표시 */
+}
+
+/* 캘린더 링크 스타일 */
+.calendar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f0f5ff;
+  color: #0056b3;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.calendar-link:hover {
+  background-color: #e0ecff;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

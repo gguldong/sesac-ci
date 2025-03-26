@@ -1,10 +1,19 @@
 import React from 'react';
 import '../../output.css';
+import '../ui.css';
 import { Link } from 'react-router-dom';
 
 export default function MainPage() {
   return (
-    <div className="min-h-screen bg-[#f4f4f4]">
+    <div className="min-h-screen bg-[#f4f4f4] relative">
+      <div className="main-image-container">
+        <img 
+          src="/mainimage.svg" 
+          alt="펀딧 메인 이미지" 
+          className="main-image"
+        />
+      </div>
+      
       <main className="container mx-auto px-4 py-20">
         <div className="max-w-3xl">
           <h1 className="text-5xl font-bold leading-tight mb-8">

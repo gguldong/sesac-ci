@@ -67,7 +67,7 @@ const ChatBot = () => {
         navigate(`/chat/${currentSessionId}`);
 
         // try {
-        //     const response = await fetch('http://localhost:8000/model', {
+        //     const response = await fetch('http://backend-service:8000/model', {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
@@ -91,13 +91,13 @@ const ChatBot = () => {
         //     setChatHistory(prev => [...prev, msg_user, msg_bot]);
 
         //     //백엔드에 저장
-        //     await fetch(`http://localhost:8000/sessions/${currentSessionId}/message`, {
+        //     await fetch(`http://backend-service:8000/sessions/${currentSessionId}/message`, {
         //       method: 'POST',
         //       headers: { 'Content-Type': 'application/json' },
         //       body: JSON.stringify(msg_user),
         //     });
 
-        //     await fetch(`http://localhost:8000/sessions/${currentSessionId}/message`, {
+        //     await fetch(`http://backend-service:8000/sessions/${currentSessionId}/message`, {
         //       method: 'POST',
         //       headers: { 'Content-Type': 'application/json' },
         //       body: JSON.stringify(msg_bot),

@@ -17,6 +17,11 @@ export default function Layout () {
     // window.location.reload(); // 페이지 강제 새로고침
   };
 
+  // 로고 클릭 시 루트(/) 경로로 이동하는 함수
+  const navigateToHome = () => {
+    navigate('/', { replace: true });
+  };
+
   return (
     <div className="layout-container">
       {/* 사이드바에 collapsed 클래스를 추가/제거하기 */}
@@ -27,7 +32,7 @@ export default function Layout () {
       ></button>
         {isSidebarOpen && (
           <>
-            <div className="sidebar-logo"></div>
+            <div className="sidebar-logo" onClick={navigateToHome}></div>
             <button className="new-chat-button" onClick={startNewChat}>
               새로운 채팅 +
             </button>
