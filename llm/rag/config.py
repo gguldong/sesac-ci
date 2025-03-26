@@ -3,12 +3,11 @@ RAG 시스템의 구성 정보를 관리하는 모듈
 """
 import os
 
-
-# # 데이터베이스 설정
-# DB_HOST = "localhost"
-# DB_USER = "username"  # 실제 사용자 이름으로 변경
-# DB_PASSWORD = "password"  # 실제 비밀번호로 변경
-# DB_NAME = "multimodal_final_project"  # 실제 데이터베이스 이름으로 변경
+# 데이터베이스 설정
+DB_HOST = "localhost"
+DB_USER = "username"  # 실제 사용자 이름으로 변경
+DB_PASSWORD = "password"  # 실제 비밀번호로 변경
+DB_NAME = "multimodal_final_project"  # 실제 데이터베이스 이름으로 변경
 
 ENDPOINT = "testdb.cfmq6wqw0199.ap-northeast-2.rds.amazonaws.com"
 PORT = 3306
@@ -23,7 +22,7 @@ DB_URI_DB2 = DB_URI #+ DB_NAME
 
 # 벡터스토어 경로
 VECTORSTORE_A_PATH = "./dragonkue" 
-JSON_FILE_PATH = "./Processed_data_v1.json"
+JSON_FILE_PATH = "./20250304.json"
 # VECTORSTORE_C_PATH = "./vectorstores/text_to_sql_vectorstore"
 
 # 임베딩 모델 설정
@@ -38,9 +37,9 @@ LLM_MODEL = "gpt-4o-mini"
 LLM_TEMPERATURE = 0.1
 
 # 검색 설정
-TOP_K_INITIAL = 30
-TOP_K_RERANK = 15
-FINAL_DOCS_COUNT = 15
+TOP_K_INITIAL = 45
+TOP_K_RERANK = 30
+FINAL_DOCS_COUNT = 30
 
 # benefits 테이블 스키마 정보
 BENEFITS_SCHEMA = """

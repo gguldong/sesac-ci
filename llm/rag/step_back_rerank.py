@@ -27,42 +27,17 @@ def clean_metadata(value):
 # FAQ 스타일 텍스트 생성 함수
 def generate_selected_text(obj):
     return (
-        # FAQ 스타일
-        f"Q: 이 서비스의 이름은 무엇인가요?\nA: {clean_metadata(obj.get('서비스명'))}\n\n"
-        f"Q: 이 서비스의 ID는 무엇인가요?\nA: {clean_metadata(obj.get('서비스ID'))}\n\n"
-        f"Q: 이 서비스는 어떤 기관에서 제공하나요?\nA: {clean_metadata(obj.get('부서명'))}\n\n"
-        f"Q: 이 서비스는 어떤 분야에 속하나요?\nA: {clean_metadata(obj.get('서비스분야'))}\n\n"
-        f"Q: 이 서비스의 목적은 무엇인가요?\nA: {clean_metadata(obj.get('서비스목적요약'))}\n\n"
-        f"Q: 이 서비스를 받을 수 있는 대상은 누구인가요?\nA: {clean_metadata(obj.get('지원대상'))}\n\n"
+        f"Q: 서비스 이름은 무엇인가요?\nA: {clean_metadata(obj.get('서비스명'))}\n\n"
+        f"Q: 서비스 ID는 무엇인가요?\nA: {clean_metadata(obj.get('서비스ID'))}\n\n"
+        f"Q: 제공 부서는 어디인가요?\nA: {clean_metadata(obj.get('부서명'))}\n\n"
+        f"Q: 서비스 분야는 무엇인가요?\nA: {clean_metadata(obj.get('서비스분야'))}\n\n"
+        f"Q: 서비스 목적은 무엇인가요?\nA: {clean_metadata(obj.get('서비스목적요약'))}\n\n"
         f"Q: 지원 내용은 무엇인가요?\nA: {clean_metadata(obj.get('지원내용'))}\n\n"
-        f"Q: 이 서비스의 선정 기준은 무엇인가요?\nA: {clean_metadata(obj.get('선정기준'))}\n\n"
-        f"Q: 이 서비스의 지원 유형은 무엇인가요?\nA: {clean_metadata(obj.get('지원유형'))}\n\n"
-        f"Q: 언제까지 신청할 수 있나요?\nA: {clean_metadata(obj.get('신청기한'))}\n\n"
+        f"Q: 선정 기준은 무엇인가요?\nA: {clean_metadata(obj.get('선정기준'))}\n\n"
+        f"Q: 신청 기한은 언제까지인가요?\nA: {clean_metadata(obj.get('신청기한'))}\n\n"
         f"Q: 신청 방법은 무엇인가요?\nA: {clean_metadata(obj.get('신청방법'))}\n\n"
-        f"Q: 어디에서 신청할 수 있나요?\nA: {clean_metadata(obj.get('접수기관'))}\n\n"
-        # 자연어 문장 스타일
-        f"{clean_metadata(obj.get('서비스명'))} 서비스 (서비스ID: {clean_metadata(obj.get('서비스ID'))})는 "
-        f"{clean_metadata(obj.get('부서명'))}에서 운영하는 {clean_metadata(obj.get('서비스분야'))} 분야의 서비스입니다. "
-        f"이 서비스는 {clean_metadata(obj.get('서비스목적요약'))}을 목표로 합니다. "
-        f"이 서비스를 받을 수 있는 대상은 {clean_metadata(obj.get('지원대상'))}입니다. "
-        f"주요 지원 내용은 다음과 같습니다: {clean_metadata(obj.get('지원내용'))}. "
-        f"이 서비스의 선정 기준은 다음과 같습니다: {clean_metadata(obj.get('선정기준'))}. "
-        f"지원 유형은 {clean_metadata(obj.get('지원유형'))}입니다. "
-        f"신청 기한은 {clean_metadata(obj.get('신청기한'))}까지이며, 신청 방법은 {clean_metadata(obj.get('신청방법'))}입니다. "
-        f"관련 문의 및 신청은 {clean_metadata(obj.get('접수기관'))}에서 할 수 있습니다."
-
+        f"Q: 접수 기관은 어디인가요?\nA: {clean_metadata(obj.get('접수기관'))}\n\n"
     )
-        # f"Q: 서비스 이름은 무엇인가요?\nA: {clean_metadata(obj.get('서비스명'))}\n\n"
-        # f"Q: 서비스 ID는 무엇인가요?\nA: {clean_metadata(obj.get('서비스ID'))}\n\n"
-        # f"Q: 제공 부서는 어디인가요?\nA: {clean_metadata(obj.get('부서명'))}\n\n"
-        # f"Q: 서비스 분야는 무엇인가요?\nA: {clean_metadata(obj.get('서비스분야'))}\n\n"
-        # f"Q: 서비스 목적은 무엇인가요?\nA: {clean_metadata(obj.get('서비스목적요약'))}\n\n"
-        # f"Q: 지원 내용은 무엇인가요?\nA: {clean_metadata(obj.get('지원내용'))}\n\n"
-        # f"Q: 선정 기준은 무엇인가요?\nA: {clean_metadata(obj.get('선정기준'))}\n\n"
-        # f"Q: 신청 기한은 언제까지인가요?\nA: {clean_metadata(obj.get('신청기한'))}\n\n"
-        # f"Q: 신청 방법은 무엇인가요?\nA: {clean_metadata(obj.get('신청방법'))}\n\n"
-        # f"Q: 접수 기관은 어디인가요?\nA: {clean_metadata(obj.get('접수기관'))}\n\n"
-
 
 # JSON 데이터 로드 및 벡터 DB 설정 함수
 def setup_vectordb(json_file_path, persist_directory):
@@ -122,7 +97,7 @@ def generate_step_back_query(original_query: str, llm) -> str:
     원래 질문으로부터 더 추상화된 질문을 생성합니다.
     """
     step_back_prompt = ChatPromptTemplate.from_messages([
-        ("system",
+        ("system", 
          "당신은 구체적인 질문에서 핵심 개념을 추출하여 더 일반적이고 추상적인 질문을 만드는 전문가입니다. "
          "원래 질문의 맥락을 유지하면서 더 광범위한 관점에서 접근할 수 있는 질문을 만들어주세요."),
         ("human", 

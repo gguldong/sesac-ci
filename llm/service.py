@@ -2,45 +2,33 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
-from llama_cpp import Llama
 import os
 from typing import Any, Dict, List, Union
+import logging
+import traceback
+import requests
+import json
+import time
+
+# 로깅 설정
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("vllm_client.log")
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # 환경 변수 로드
 load_dotenv()
 
 app = FastAPI()
 
-# GPU 사용 여부 확인 및 설정
-USE_GPU = os.environ.get("USE_GPU", "1").lower() in ("1", "true", "yes", "y")
-
-# 시스템 환경에 따라 GPU 사용 여부 결정
-def check_cuda_available():
-    # 환경 변수로 강제 비활성화된 경우
-    if not USE_GPU:
-        print("환경 변수에 따라 CPU 모드로 실행됩니다.")
-        return False
-    else:
-        print("CUDA")
-        return True 
-  
-
-# GPU 사용 가능 여부 확인
-CUDA_AVAILABLE = check_cuda_available()
-
-# 모델 초기화
-model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                         "OpenChat-3.5-7B-Mixtral-v2.0.i1-Q4_K_M.gguf")
-
-# 모델 로드 (서버 시작 시 한 번만 로드됨)
-llm = Llama(
-    model_path=model_path,
-    n_ctx=8192,
-    n_gpu_layers=-1 if CUDA_AVAILABLE else 0,  # CUDA 사용 가능하면 모든 레이어를 GPU에서 실행, 아니면 CPU만 사용
-    verbose=True      # 로딩 시 CUDA 사용 여부 로그 출력
-)
-
-print(f"모델 로드 완료 - GPU 사용: {CUDA_AVAILABLE}")
+# VLLM 서버 설정
+VLLM_SERVER_URL = os.environ.get("VLLM_SERVER_URL", "https://qnsqwbfncpfgeqxe.tunnel-pt.elice.io")
+REQUEST_TIMEOUT = int(os.environ.get("REQUEST_TIMEOUT", "30"))
 
 # 요청 모델 정의
 class ChatRequest(BaseModel):
@@ -54,6 +42,9 @@ class ChatResponse(BaseModel):
 @app.post("/generate", response_model=ChatResponse)
 async def generate_response(request: ChatRequest):
     try:
+        start_time = time.time()
+        logger.info(f"요청 수신: 메시지 길이 {len(request.message)}, 대화 기록 길이 {len(request.conversation_history)}")
+        
         # 메시지 배열 준비
         messages = []
         valid_roles = {"system", "assistant222", "user111", "function", "tool", "developer"}
@@ -63,134 +54,19 @@ async def generate_response(request: ChatRequest):
 사용자의 질문에 대해 명확하고 정확하게 답변해주세요.
 정책 정보가 제공된 경우, 해당 정보를 바탕으로 답변해주세요."""
 
-        # RAG 컨텍스트가 있으면 정책 전문가 프롬프트로 변경
-        if request.rag_context:
-            processed_rag_context = []
+        rag_context = request.rag_context
+        # 너무 길면 추가 제한
+        max_chars = 25000  # 약 3000 토큰에 해당
+        if len(rag_context) > max_chars:
+            trimmed_rag_context = trimmed_rag_context[:max_chars] + "...(내용 일부 생략)"
+        
+        logger.info(f"처리된 RAG 컨텍스트 길이: {len(trimmed_rag_context)}")
             
-            # 딕셔너리 형태로 전달된 경우 (새로운 API 응답 구조)
-            if isinstance(request.rag_context, dict):
-                # 문서 정보 추출 (최대 15개까지만)
-                documents = request.rag_context.get("documents", {})
-                sources = request.rag_context.get("sources", [])
-                
-                # 소스 목록으로 컨텍스트 구성
-                doc_count = 0
-                for source in sources:
-                    if doc_count >= 15:
-                        break
-                    
-                    doc_count += 1
-                    title = source.get("title", "제목 없음")
-                    content = source.get("content", "내용 없음")
-                    service_id = source.get("service_id", "ID 없음")
-                    eligibility = source.get("eligibility", "자격 요건 정보 없음")
-                    benefits = source.get("benefits", "혜택 정보 없음")
-                    
-                    # 문서 형식으로 추가
-                    processed_rag_context.append(f"문서: {title}")
-                    processed_rag_context.append(f"내용: {content}")
-                    if eligibility:
-                        processed_rag_context.append(f"자격 요건: {eligibility}")
-                    if benefits:
-                        processed_rag_context.append(f"혜택: {benefits}")
-                    processed_rag_context.append("")  # 문서 구분을 위한 빈 줄
-                
-                # 문서가 없거나 소스가 없는 경우 documents에서 직접 추출
-                if doc_count == 0 and documents:
-                    for doc_id, doc_info in documents.items():
-                        if doc_count >= 15:
-                            break
-                        
-                        doc_count += 1
-                        content = doc_info.get("내용", "내용 없음")
-                        metadata = doc_info.get("메타데이터", {})
-                        title = metadata.get("title", "제목 없음")
-                        
-                        # 문서 형식으로 추가
-                        processed_rag_context.append(f"문서: {title}")
-                        processed_rag_context.append(f"내용: {content}")
-                        
-                        # 메타데이터에서 추가 정보 추출
-                        if "eligibility" in metadata:
-                            processed_rag_context.append(f"자격 요건: {metadata['eligibility']}")
-                        if "benefits" in metadata:
-                            processed_rag_context.append(f"혜택: {metadata['benefits']}")
-                        
-                        processed_rag_context.append("")  # 문서 구분을 위한 빈 줄
-                
-                # 서비스 ID 정보 추가
-                service_ids = request.rag_context.get("service_ids", [])
-                common_ids = request.rag_context.get("common_ids", [])
-                if service_ids or common_ids:
-                    id_summary = "관련 서비스 ID: " + ", ".join(service_ids if service_ids else common_ids)
-                    processed_rag_context.append(id_summary)
-            
-            # 문자열 형태로 전달된 경우 (기존 방식)
-            elif isinstance(request.rag_context, str):
-                # 상위 15개 문서로 제한하고 문서 ID 제거
-                rag_context_lines = request.rag_context.strip().split('\n')
-                doc_count = 0
-                current_doc_lines = []
-                in_document = False
-                
-                for line in rag_context_lines:
-                    # 새 문서 시작
-                    if line.startswith("문서 ID:") or line.startswith("문서:") or line.startswith("==="):
-                        # 이전 문서 처리
-                        if in_document and current_doc_lines:
-                            # 긴 문서인 경우 내용 요약 (첫 5줄과 마지막 5줄만 유지)
-                            if len(current_doc_lines) > 15:
-                                top_lines = current_doc_lines[:5]
-                                bottom_lines = current_doc_lines[-5:]
-                                current_doc_lines = top_lines + ["..."] + bottom_lines
-                            
-                            processed_rag_context.extend(current_doc_lines)
-                            processed_rag_context.append("")  # 문서 구분을 위한 빈 줄
-                        
-                        # 새 문서 시작
-                        doc_count += 1
-                        if doc_count > 15:
-                            break
-                        current_doc_lines = []
-                        in_document = True
-                        continue
-                    
-                    # ID 패턴 제거 (예: "문서 ID: 12345" -> 제거)
-                    if "ID:" in line or "번호:" in line:
-                        continue
-                    
-                    # 중요하지 않은 메타데이터 필터링
-                    if any(skip in line for skip in ["생성일:", "수정일:", "작성자:", "버전:", "URL:"]):
-                        continue
-                    
-                    # 현재 문서 내용 저장
-                    if in_document:
-                        current_doc_lines.append(line)
-                
-                # 마지막 문서 처리
-                if in_document and current_doc_lines:
-                    # 긴 문서인 경우 내용 요약 (첫 5줄과 마지막 5줄만 유지)
-                    if len(current_doc_lines) > 15:
-                        top_lines = current_doc_lines[:5]
-                        bottom_lines = current_doc_lines[-5:]
-                        current_doc_lines = top_lines + ["..."] + bottom_lines
-                    
-                    processed_rag_context.extend(current_doc_lines)
-            
-            # 처리된 컨텍스트로 변환
-            trimmed_rag_context = "\n".join(processed_rag_context)
-            
-            # 너무 길면 추가 제한
-            max_chars = 12000  # 약 3000 토큰에 해당
-            if len(trimmed_rag_context) > max_chars:
-                trimmed_rag_context = trimmed_rag_context[:max_chars] + "...(내용 일부 생략)"
-            
-            system_prompt = """당신은 정책 전문가입니다. 주어진 정책 정보를 바탕으로 사용자의 질문에 답변해주세요.
+        system_prompt = """당신은 정책 전문가입니다. 주어진 정책 정보를 바탕으로 사용자의 질문에 답변해주세요.
 답변은 친절하고 명확하게 해주세요. 정책 정보에 없는 내용은 생성하지 마세요."""
-            messages.append({"role": "system", "content": system_prompt})
-            messages.append({"role": "system", "content": trimmed_rag_context})
-        else:
-            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "system", "content": trimmed_rag_context})
+ 
 
         # 대화 기록 처리
         if request.conversation_history:
@@ -227,27 +103,93 @@ async def generate_response(request: ChatRequest):
         
         prompt += "GPT4 Correct Assistant:"
         
-        # 토큰 디버깅 정보 출력
+        # 프롬프트 텍스트 길이 로깅
+        logger.info(f"최종 프롬프트 길이: {len(prompt)}")
+        
+        # VLLM 서버에 API 요청
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "prompt": prompt,
+            "temperature": 0.7,
+            "max_tokens": 500,
+            "stop": ["<|end_of_turn|>"]
+        }
+        VLLM_GENERATE = VLLM_SERVER_URL + "/generate"
+        logger.info(f"외부 VLLM 서버 요청 시작: {VLLM_GENERATE}")
+        
         try:
-            tokens = llm.tokenize(prompt.encode('utf-8'))
-            token_count = len(tokens)
-            print(f"총 토큰 수: {token_count}, 컨텍스트 윈도우: {llm.n_ctx}")
+            response = requests.post(
+                VLLM_GENERATE,
+                headers=headers,
+                json=payload,
+                timeout=REQUEST_TIMEOUT
+            )
+            response.raise_for_status()  # HTTP 오류 발생 시 예외 발생
             
-            if token_count > llm.n_ctx - 500:  # 응답 토큰을 위한 여유 공간 확보
-                print("경고: 토큰 수가 컨텍스트 윈도우에 가깝습니다. RAG 컨텍스트를 더 줄여야 할 수 있습니다.")
-        except Exception as e:
-            print(f"토큰 계산 중 오류: {str(e)}")
-        
-        # OpenChat 모델로 응답 생성
-        output = llm(prompt, max_tokens=500, temperature=0.7)
-        openchat_response = output["choices"][0]["text"]
-        
-        return ChatResponse(response=openchat_response)
+            # 응답 처리
+            response_data = response.json()
+            logger.debug(f"VLLM 서버 응답: {json.dumps(response_data, ensure_ascii=False, indent=2)}")
+            
+            # 응답 구조에 따라 텍스트 추출 (API 응답 구조에 맞게 수정 필요)
+            if "choices" in response_data and len(response_data["choices"]) > 0:
+                generated_text = response_data["choices"][0]["text"].strip()
+            else:
+                raise ValueError("VLLM 서버 응답에서 생성된 텍스트를 찾을 수 없습니다")
+            
+            end_time = time.time()
+            logger.info(f"응답 완료: 응답 길이 {len(generated_text)}, 처리 시간: {end_time - start_time:.2f}초")
+            
+            return ChatResponse(response=generated_text)
+            
+        except requests.exceptions.RequestException as e:
+            error_message = f"VLLM 서버 통신 오류: {str(e)}"
+            logger.error(error_message)
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"서버 오류 응답: {e.response.text}")
+            raise HTTPException(status_code=503, detail=error_message)
 
     except Exception as e:
-        error_message = f"모델 추론 중 오류 발생: {str(e)}"
-        print(error_message)
+        error_message = f"요청 처리 중 오류 발생: {str(e)}"
+        logger.error(error_message)
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=error_message)
 
+@app.get("/health")
+async def health_check():
+    """서비스 상태 확인용 엔드포인트"""
+    try:
+        # VLLM 서버 연결 상태 확인
+        headers = {"Content-Type": "application/json"}
+        
+        # 간단한 헬스 체크용 요청
+        response = requests.post(
+            VLLM_SERVER_URL,
+            headers=headers,
+            json={
+                "prompt": "Hello",
+                "max_tokens": 1
+            },
+            timeout=5  # 짧은 타임아웃으로 설정
+        )
+        response.raise_for_status()
+        
+        return {
+            "status": "healthy", 
+            "vllm_server": "connected",
+            "vllm_server_url": VLLM_SERVER_URL
+        }
+    except Exception as e:
+        logger.warning(f"헬스 체크 중 오류: {str(e)}")
+        return {
+            "status": "degraded",
+            "vllm_server": "disconnected",
+            "error": str(e)
+        }
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8002) 
+    port = int(os.environ.get("SERVICE_PORT", "8002"))
+    logger.info(f"서비스 시작 - 포트: {port}, VLLM 서버: {VLLM_SERVER_URL}")
+    uvicorn.run(app, host="0.0.0.0", port=port)

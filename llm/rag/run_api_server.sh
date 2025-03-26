@@ -19,4 +19,4 @@ pip install -q fastapi uvicorn
 
 # API 서버 실행
 echo "FastAPI 서버 실행 중..."
-python -m uvicorn api:app --host 0.0.0.0 --port 8001 
+python -m uvicorn api:app --host 0.0.0.0 --port 8001 --reload

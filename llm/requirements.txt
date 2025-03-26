@@ -13,7 +13,7 @@ cohere==5.14.0
 dataclasses-json==0.6.7
 distro==1.9.0
 exceptiongroup==1.2.2
-faiss-cpu
+faiss-gpu==1.7.2
 fastapi==0.115.11
 fastavro==1.10.0
 filelock==3.18.0
@@ -46,7 +46,7 @@ multidict==6.2.0
 mypy-extensions==1.0.0
 mysql-connector-python==9.2.0
 networkx==3.4.2
-numpy<2
+numpy==1.24.3
 nvidia-cublas-cu12==12.4.5.8
 nvidia-cuda-cupti-cu12==12.4.127
 nvidia-cuda-nvrtc-cu12==12.4.127
@@ -101,3 +101,4 @@ urllib3==2.3.0
 uvicorn==0.34.0
 yarl==1.18.3
 zstandard==0.23.0
+tiktoken
