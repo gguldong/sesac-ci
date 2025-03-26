@@ -28,20 +28,28 @@
 
 
 
-FROM node:22.13.1-alpine
+FROM node:23.7.0-alpine
 
 WORKDIR /app
 
+# 필요한 패키지 파일 복사 및 설치
 COPY package*.json ./
 RUN npm install
 
+# 모든 소스 파일 복사
 COPY . .
 
-# 👉 앱 빌드
+# node_modules/.bin에 실행 권한 부여
+RUN chmod +x node_modules/.bin/*
+
+# 앱 빌드
 RUN npm run build
 
-# 👉 정적 파일 서빙을 위한 serve 설치
+# 서빙을 위한 serve 설치
 RUN npm install -g serve
 
-# 👉 최종 실행 명령
+# 3000 포트로 서빙
+EXPOSE 3000
+
+# build 디렉토리 내용을 서빙
 CMD ["serve", "-s", "build", "-l", "3000"]
