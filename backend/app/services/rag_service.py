@@ -16,8 +16,8 @@ load_dotenv()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # RAG API 설정
-RAG_API_URL = os.getenv("RAG_API_URL", "http://llm-service:8001")  # 기본값은 localhost:8001
-RAG_API_ENDPOINT = f"{RAG_API_URL}/api/rag"
+RAG_API_URL = os.getenv("RAG_API_URL", "http://localhost:8001")  # 기본값은 localhost:8001
+RAG_API_ENDPOINT = f"http://localhost:8001/api/rag"
 
 async def retrieve_rag_results(query: str, user_id: str = "default_user") -> Dict[str, Any]:
     """
@@ -50,6 +50,7 @@ async def retrieve_rag_results(query: str, user_id: str = "default_user") -> Dic
             if response.status_code == 200:
                 result = response.json()
                 logger.info(f"RAG API 호출 성공: 원본 데이터 반환")
+                print(f"RAG API 응답: {result}")
                 return result
             else:
                 logger.error(f"RAG API 호출 오류: 상태 코드 {response.status_code}, 응답: {response.text}")

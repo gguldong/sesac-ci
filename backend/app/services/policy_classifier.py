@@ -1,6 +1,8 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import json
+import re
 
 load_dotenv()
 
@@ -24,6 +26,7 @@ def classify_policy_question(message: str) -> bool:
     -적절한 질의
 
     최종 결과는 무조건 다음 형식으로만 출력한다:
+
     {
         "판별 결과": "[주제와 무관한 내용 또는 상식에 벗어난 내용 또는 적절한 질의]"
         "판별 근거": "[판별한 이유에 대한 상세 설명]"
@@ -64,7 +67,7 @@ def classify_policy_question(message: str) -> bool:
     입력: "내일 날씨 어때?"
     출력:
     {
-        "판별 결과": "핵심 키워드 주제에 맞지 않는 내용"
+        "판별 결과": "주제와 무관한 내용"
         "판별 근거": "사용자 질의는 날씨 정보를 요청하고 있으며, 이는 정책 추천과 관련이 없습니다."
     }
 
@@ -339,14 +342,20 @@ def classify_policy_question(message: str) -> bool:
     
     try:
         completion = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
-                {"role": "system", "content": system_prompt2},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": message}
             ]
         )
-        response = completion.choices[0].message.content.lower().strip()
-        return response == "true"
+        response = completion.choices[0].message.content.strip()
+        
+        # 정규식으로 "적절한 질의" 문구가 포함되어 있는지 확인
+        print(response)
+        if re.search(r'"판별\s*결과"\s*:\s*"적절한\s*질의"', response):
+            return True
+        else:
+            return False
     except Exception as e:
         print(f"정책 분류 중 에러 발생: {str(e)}")
         return False 
