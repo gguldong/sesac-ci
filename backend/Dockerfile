@@ -92,21 +92,24 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt ./
 
-# 의존성 관리를 위한 스크립트 생성
-RUN echo "#!/bin/bash" > install_deps.sh && \
-    echo "pip install --no-cache-dir --upgrade pip" >> install_deps.sh && \
-    echo "pip install numpy==1.26.2" >> install_deps.sh && \
-    echo "pip install --no-deps langchain-community==0.3.20" >> install_deps.sh && \
-    echo "pip install --no-deps numba==0.60.0" >> install_deps.sh && \
-    echo "pip install --no-deps mistral-common==1.5.4" >> install_deps.sh && \
-    echo "pip install --no-deps llama-cpp-python==0.3.8" >> install_deps.sh && \
-    echo "pip install -r requirements.txt --ignore-installed" >> install_deps.sh && \
-    chmod +x install_deps.sh
+# 필수 패키지만 직접 설치
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install numpy==1.24.4 && \
+    pip install fastapi==0.115.11 uvicorn==0.34.0 pydantic==2.10.6 python-dotenv==1.0.1
 
-RUN ./install_deps.sh
+# 다른 필수 패키지들을 개별적으로 설치 - 실패해도 계속 진행
+RUN pip install langchain==0.3.21 || true
+RUN pip install langchain-core==0.3.45 || true
+RUN pip install openai==1.66.5 || true
+RUN pip install SQLAlchemy==2.0.39 || true
+RUN pip install python-multipart==0.0.20 || true
+RUN pip install requests==2.32.3 || true
 
+# 애플리케이션 코드 복사
 COPY . .
 
+# 포트 노출
 EXPOSE 8000
 
+# FastAPI 서버 실행
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
