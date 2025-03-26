@@ -77,7 +77,7 @@
 
 # # FastAPI 서버 실행
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-FROM continuumio/minicondFROM python:3.10-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
