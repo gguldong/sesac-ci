@@ -27,20 +27,12 @@
 # CMD ["serve", "-s", "build", "-l", "3000"]
 
 
-
 FROM node:18-alpine
 
 WORKDIR /app
 
-# 필요한 패키지 파일 복사 및 설치
-COPY package*.json ./
-RUN npm install
-
-# 모든 소스 파일 복사
-COPY . .
-
-# 앱 빌드
-RUN npm run build
+# 이미 빌드된 파일만 복사
+COPY build/ ./build/
 
 # 서빙을 위한 serve 설치
 RUN npm install -g serve
