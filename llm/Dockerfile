@@ -201,6 +201,7 @@
 ######################################################################################################
 # CUDA 12.1 기반 런타임 이미지
 # CUDA 11.8 기반 NVIDIA 공식 이미지 사용 (Python 3.10 포함)
+# CUDA 11.8 기반 NVIDIA 공식 이미지 사용 (Python 3.10 포함)
 FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
 # 작업 디렉토리 설정
@@ -216,17 +217,22 @@ RUN apt-get update && apt-get install -y \
 # Python 3.10을 기본 python으로 설정
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# requirements.txt 복사 및 Python 패키지 설치
+# pip 업그레이드 및 기본 패키지 설치
+RUN pip install --upgrade pip setuptools wheel
+
+# requirements.txt 복사
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# CUDA와 호환되는 PyTorch 설치 (필요 시 requirements.txt에 명시된 버전으로 조정)
-RUN pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu118
+# 의존성 충돌 방지를 위해 pip의 resolver를 느슨하게 설정하고 설치
+RUN pip install --no-cache-dir -r requirements.txt --use-deprecated=legacy-resolver || pip install --no-cache-dir -r requirements.txt --ignore-installed
 
-# 추가 패키지 설치 (필요한 경우)
-RUN pip install \
+# CUDA와 호환되는 PyTorch 설치 (requirements.txt에 명시된 경우 덮어쓰기 방지)
+RUN pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu118 --no-deps
+
+# 추가 패키지 설치 (필요한 경우 명시적 설치로 보완)
+RUN pip install --no-cache-dir \
     fastapi \
-    uvicorn[standard] \
+    "uvicorn[standard]" \
     langchain \
     langchain-community \
     langchain-huggingface \
@@ -243,9 +249,9 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 
 # 포트 노출 (FastAPI 기본 포트 8000 사용 가정)
-EXPOSE 8000
+EXPOSE 8001
 
-# 실행 명령어 (run_all.sh 또는 run_api_server.sh 실행)
+# 실행 명령어 (run_api_server.sh 실행)
 CMD ["bash", "run_api_server.sh"]
 
 # CUDA 12를 사용하려면 아래 주석을 해제하고 위 FROM을 대체
