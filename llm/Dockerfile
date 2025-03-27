@@ -219,21 +219,22 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # pip 및 핵심 도구 업그레이드
-RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip3 install --upgrade pip setuptools wheel
 
-# uvicorn 먼저 설치
-RUN pip3 install --no-cache-dir uvicorn
+# 기본 의존성 패키지 설치
+RUN pip3 install --no-cache-dir \
+    typing-extensions \
+    pydantic \
+    requests \
+    packaging
 
-# langchain-core 먼저 설치
-RUN pip3 install --no-cache-dir langchain-core==0.3.46
+# 패키지들을 점진적으로 설치
+RUN pip3 install --no-cache-dir \
+    uvicorn \
+    "langchain-core>=0.3.0,<0.4.0" \
+    "langchain-community>=0.3.0,<0.4.0" \
+    langchain==0.3.21
 
-# langchain-community 설치
-RUN pip3 install --no-cache-dir langchain-community==0.3.20
-
-# langchain 설치
-RUN pip3 install --no-cache-dir langchain==0.3.21
-
-# 나머지 패키지 설치 과정 (이전 Dockerfile과 동일)
 RUN pip3 install --no-cache-dir \
     fastapi==0.115.11 \
     langchain-cohere==0.4.3 \
