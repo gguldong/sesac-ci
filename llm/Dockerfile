@@ -200,61 +200,53 @@
 # CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
 ######################################################################################################
 # CUDA 12.1 기반 런타임 이미지
-FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
+# CUDA 11.8 기반 NVIDIA 공식 이미지 사용 (Python 3.10 포함)
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
+# 작업 디렉토리 설정
 WORKDIR /app
 
-# 시스템 패키지 설치
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    python3 \
+# 시스템 패키지 업데이트 및 필수 도구 설치
+RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
-    build-essential \
     git \
-    cmake \
-    curl \
-    libopenblas-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# pip 업그레이드
-RUN pip3 install --upgrade pip setuptools wheel
+# Python 3.10을 기본 python으로 설정
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Python 기본 패키지
-RUN pip3 install --no-cache-dir \
-    typing-extensions \
-    pydantic \
-    requests \
-    packaging
+# requirements.txt 복사 및 Python 패키지 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# LangChain 관련 패키지 (버전 미지정 → 최신 호환 조합 자동 설치)
-RUN pip3 install --no-cache-dir \
-    langchain-core \
+# CUDA와 호환되는 PyTorch 설치 (필요 시 requirements.txt에 명시된 버전으로 조정)
+RUN pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu118
+
+# 추가 패키지 설치 (필요한 경우)
+RUN pip install \
+    fastapi \
+    uvicorn[standard] \
+    langchain \
     langchain-community \
-    langchain-openai \
-    langchain-cohere
+    langchain-huggingface \
+    langchain-cohere \
+    sqlalchemy \
+    llama-cpp-python \
+    tiktoken \
+    requests
 
-# 기타 유틸리티
-RUN pip3 install --no-cache-dir \
-    fastapi==0.115.11 \
-    uvicorn \
-    tiktoken==0.9.0 \
-    faiss-cpu==1.10.0 \
-    python-dotenv==1.0.1 \
-    sentence-transformers==3.4.1 \
-    cohere==5.14.0 \
-    PyYAML==6.0.2
-
-# llama-cpp-python CUDA 지원 설정
-ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
-ENV FORCE_CMAKE=1
-RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
-
-# 코드 복사 및 포트 노출
+# 애플리케이션 소스 코드 복사
 COPY . .
-EXPOSE 8001
 
-CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
+# 환경 변수 설정 (dotenv 사용 시 필요)
+ENV PYTHONUNBUFFERED=1
 
+# 포트 노출 (FastAPI 기본 포트 8000 사용 가정)
+EXPOSE 8000
+
+# 실행 명령어 (run_all.sh 또는 run_api_server.sh 실행)
+CMD ["bash", "run_api_server.sh"]
+
+# CUDA 12를 사용하려면 아래 주석을 해제하고 위 FROM을 대체
+# FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04
