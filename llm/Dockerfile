@@ -202,14 +202,12 @@
 # CUDA 12.1 기반 런타임 이미지
 FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
 
-# 환경 설정
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-# 작업 디렉토리
 WORKDIR /app
 
-# 필수 시스템 패키지 설치
+# 시스템 필수 패키지 설치
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
@@ -232,11 +230,11 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# LangChain 하위 모듈 설치 (안정 버전 조합)
+# LangChain 최신 호환 버전 설치 (의존성 해결 버전 조합)
 RUN pip3 install --no-cache-dir \
-    langchain-core==0.1.33 \
-    langchain-community==0.0.21 \
-    langchain-openai==0.0.8 \
+    langchain-core==0.2.33 \
+    langchain-community==0.0.40 \
+    langchain-openai==0.0.18 \
     langchain-cohere==0.2.4
 
 # 기타 핵심 라이브러리 설치
@@ -250,17 +248,17 @@ RUN pip3 install --no-cache-dir \
     cohere==5.14.0 \
     PyYAML==6.0.2
 
-# llama-cpp-python 설치 (CUDA 지원)
+# llama-cpp-python (CUDA 지원)
 ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
 ENV FORCE_CMAKE=1
 RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
 
-# 앱 소스 복사
+# 프로젝트 코드 복사
 COPY . .
 
 # FastAPI 포트 노출
 EXPOSE 8001
 
-# 서버 실행 명령어
+# FastAPI 앱 실행
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
 
