@@ -218,25 +218,26 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# pip 업그레이드
+# pip 업그레이드 및 기본 도구 설치
 RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade setuptools wheel
 
-# langchain 및 관련 패키지 한 번에 설치
-RUN pip3 install --no-cache-dir \
+# 패키지 설치 시도
+RUN pip3 install \
     fastapi==0.115.11 \
-    uvicorn==0.27.1 \
-    langchain==0.3.21 \
-    langchain-community==0.3.20 \
-    langchain-core==0.3.46 \
-    langchain-cohere==0.4.3 \
-    langchain-openai==0.3.9 \
-    tiktoken==0.9.0 \
-    faiss-cpu==1.10.0 \
-    python-dotenv==1.0.1 \
-    sentence-transformers==3.4.1 \
-    cohere==5.14.0 \
-    PyYAML==6.0.2 \
-    llama-cpp-python==0.3.8
+    uvicorn \
+    "langchain>=0.3.0,<0.4.0" \
+    "langchain-community>=0.3.0,<0.4.0" \
+    "langchain-core>=0.3.0,<0.4.0" \
+    langchain-cohere \
+    langchain-openai \
+    tiktoken \
+    faiss-cpu \
+    python-dotenv \
+    sentence-transformers \
+    cohere \
+    PyYAML \
+    llama-cpp-python
 
 COPY . .
 
