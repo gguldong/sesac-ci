@@ -5,7 +5,7 @@ import asyncio
 import uvicorn
 from typing import Dict, List, Any, Optional, Union
 from main import main
-from service_local import router as llm_router  # 같은 디렉토리에 있으므로 직접 임포트
+from service_local import llm_router  # 같은 디렉토리에 있으므로 직접 임포트
 
 app = FastAPI(title="RAG API Service", description="AI 시스템을 위한 API 서비스")
 
@@ -18,8 +18,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# RAG API용 라우터 생성
+rag_router = APIRouter()  # 새 라우터 생성
+
+
+# # 새 라우터 생성 - RAG API용
+# router = APIRouter()  # 이 부분 추가 - RAG 엔드포인트를 위한 별도 라우터
+
+
 # LLM 라우터 추가 - '/llm' 경로에 마운트
 app.include_router(llm_router, tags=["LLM Service"])
+
+# RAG 라우터 추가
+app.include_router(rag_router, tags=["RAG Service"])  # 이 부분 추가 - router를 app에 포함
+
+
+
 
 class RagRequest(BaseModel):
     query: str

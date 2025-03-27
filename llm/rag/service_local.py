@@ -13,7 +13,7 @@ import tiktoken
 load_dotenv()
 
 # APIRouter 객체 생성
-router = APIRouter()
+llm_router = APIRouter()
 
 # 로깅 설정
 logging.basicConfig(
@@ -54,7 +54,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
 
-@router.post("/generate", response_model=ChatResponse)
+@llm_router.post("/generate", response_model=ChatResponse)
 async def generate_response(request: ChatRequest):
     # (기존 코드 유지)
     pass
