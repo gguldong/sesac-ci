@@ -229,7 +229,7 @@ RUN pip3 install --no-cache-dir \
 # 주요 패키지 설치
 RUN pip3 install --no-cache-dir \
     fastapi==0.115.11 \
-    uvicorn==0.34.0 \
+    uvicorn==0.27.1 \
     langchain==0.3.21 \
     langchain-community==0.3.20 \
     langchain-core==0.3.46 \
@@ -241,7 +241,7 @@ RUN pip3 install --no-cache-dir \
     sentence-transformers==3.4.1 \
     cohere==5.14.0 \
     PyYAML==6.0.2 \
-    llama-cpp-python==0.3.8 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121/
+    llama-cpp-python==0.3.8
 
 COPY . .
 
