@@ -205,55 +205,31 @@
 # CUDA 11.8 기반 NVIDIA 공식 이미지 사용 (Python 3.10 포함)
 FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
-# 작업 디렉토리 설정
 WORKDIR /app
 
-# 시스템 패키지 업데이트 및 필수 도구 설치
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Python 3.10을 기본 python으로 설정
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# pip 업그레이드 및 기본 패키지 설치
 RUN pip install --upgrade pip setuptools wheel
 
-# CUDA와 호환되는 PyTorch 설치
-RUN pip install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cu118 --no-deps
+RUN pip install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cu118
 
-# 필수 패키지 설치 (버전 충돌 방지)
-RUN pip install --no-cache-dir \
-    numpy==1.26.4 \
-    fastapi==0.115.0 \
-    "uvicorn[standard]==0.30.6" \
-    langchain==0.3.0 \
-    langchain-community==0.3.0 \
-    langchain-huggingface==0.1.0 \
-    langchain-cohere==0.3.0 \
-    sqlalchemy==2.0.35 \
-    llama-cpp-python==0.2.91 \
-    tiktoken==0.7.0 \
-    requests==2.32.3 \
-    accelerate==0.33.0 \
-    huggingface-hub==0.25.1 \
-    pydantic==2.9.2 \
-    python-dotenv==1.0.1 \
-    aiohttp==3.10.5
+# 단계별 설치로 문제 파악 용이
+RUN pip install --no-cache-dir numpy==1.26.4
+RUN pip install --no-cache-dir fastapi==0.115.0 "uvicorn[standard]==0.30.6"
+RUN pip install --no-cache-dir langchain==0.3.0 langchain-community==0.3.0 langchain-huggingface==0.1.0 langchain-cohere==0.3.0
+RUN pip install --no-cache-dir sqlalchemy==2.0.35 llama-cpp-python==0.2.91 tiktoken==0.7.0 requests==2.32.3
+RUN pip install --no-cache-dir accelerate==0.33.0 huggingface-hub==0.25.1 pydantic==1.10.13 python-dotenv==1.0.1 aiohttp==3.10.5
 
-# 애플리케이션 소스 코드 복사
 COPY . .
 
-# 환경 변수 설정 (dotenv 사용 시 필요)
 ENV PYTHONUNBUFFERED=1
 
-# 포트 노출 (FastAPI 기본 포트 8001 사용)
 EXPOSE 8001
 
-# 실행 명령어 (run_api_server.sh 실행)
 CMD ["bash", "run_api_server.sh"]
-
-# CUDA 12를 사용하려면 아래 주석을 해제하고 위 FROM을 대체
-# FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04
