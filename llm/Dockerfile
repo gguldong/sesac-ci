@@ -203,20 +203,30 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
+ENV LLAMA_CUBLAS=1
 
 WORKDIR /app
 
-# tzdata를 제외하고 필요한 패키지만 설치
+# 필요한 시스템 패키지 설치
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     build-essential \
     git \
+    cmake \
+    python3-dev \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 핵심 패키지 설치
+# 패키지 설치 준비
+RUN pip3 install --no-cache-dir \
+    cmake \
+    scikit-build \
+    setuptools \
+    wheel
+
+# 주요 패키지 설치
 RUN pip3 install --no-cache-dir \
     fastapi==0.115.11 \
     uvicorn==0.34.0 \
@@ -231,9 +241,10 @@ RUN pip3 install --no-cache-dir \
     sentence-transformers==3.4.1 \
     cohere==5.14.0 \
     PyYAML==6.0.2 \
-    llama-cpp-python==0.3.8
+    llama-cpp-python==0.3.8 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121/
 
 COPY . .
+
 EXPOSE 8001
 
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
