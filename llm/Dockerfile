@@ -211,33 +211,42 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
+    python3-dev \
     build-essential \
     git \
     cmake \
-    python3-dev \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# pip 업그레이드 및 기본 도구 설치
-RUN pip3 install --upgrade pip
-RUN pip3 install --upgrade setuptools wheel
+# pip 및 핵심 도구 업그레이드
+RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
 
-# 패키지 설치 시도
-RUN pip3 install \
-    fastapi==0.115.11 \
+# 패키지 설치 순서 조정 및 개별 설치
+RUN pip3 install --no-cache-dir \
+    typing-extensions \
+    pydantic \
+    fastapi==0.115.11
+
+RUN pip3 install --no-cache-dir \
     uvicorn \
-    "langchain>=0.3.0,<0.4.0" \
-    "langchain-community>=0.3.0,<0.4.0" \
-    "langchain-core>=0.3.0,<0.4.0" \
-    langchain-cohere \
-    langchain-openai \
-    tiktoken \
-    faiss-cpu \
-    python-dotenv \
-    sentence-transformers \
-    cohere \
-    PyYAML \
-    llama-cpp-python
+    langchain==0.3.21 \
+    langchain-core==0.3.46 \
+    langchain-community==0.3.20
+
+RUN pip3 install --no-cache-dir \
+    langchain-cohere==0.4.3 \
+    langchain-openai==0.3.9 \
+    tiktoken==0.9.0
+
+RUN pip3 install --no-cache-dir \
+    faiss-cpu==1.10.0 \
+    python-dotenv==1.0.1 \
+    sentence-transformers==3.4.1
+
+RUN pip3 install --no-cache-dir \
+    cohere==5.14.0 \
+    PyYAML==6.0.2 \
+    llama-cpp-python==0.3.8
 
 COPY . .
 
