@@ -228,14 +228,22 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
+# 의존성 패키지들을 명시적으로 설치
+RUN pip3 install --no-cache-dir \
+    "PyYAML>=5.4.1" \
+    "Jinja2>=3.0.0" \
+    "numpy>=1.20.0"
+
 # uvicorn 먼저 설치
 RUN pip3 install --no-cache-dir uvicorn
 
-# langchain-core 설치
-RUN pip3 install --no-cache-dir "langchain-core>=0.3.0,<0.4.0"
+# langchain-core 설치 방식 변경
+RUN pip3 install --no-cache-dir \
+    "langchain-core==0.3.46"
 
 # langchain-community 설치
-RUN pip3 install --no-cache-dir "langchain-community>=0.3.0,<0.4.0"
+RUN pip3 install --no-cache-dir \
+    "langchain-community==0.3.20"
 
 # langchain 설치
 RUN pip3 install --no-cache-dir langchain==0.3.21
