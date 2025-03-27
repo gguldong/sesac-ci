@@ -211,6 +211,10 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
     git \
+    cmake \
+    g++ \
+    make \
+    libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -219,11 +223,18 @@ RUN pip install --upgrade pip setuptools wheel
 
 RUN pip install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cu118
 
-# 단계별 설치로 문제 파악 용이
+# 단계별 설치
 RUN pip install --no-cache-dir numpy==1.26.4
 RUN pip install --no-cache-dir fastapi==0.115.0 "uvicorn[standard]==0.30.6"
 RUN pip install --no-cache-dir langchain==0.3.0 langchain-community==0.3.0 langchain-huggingface==0.1.0 langchain-cohere==0.3.0
-RUN pip install --no-cache-dir sqlalchemy==2.0.35 llama-cpp-python==0.2.91 tiktoken==0.7.0 requests==2.32.3
+RUN pip install --no-cache-dir sqlalchemy==2.0.35 tiktoken==0.7.0 requests==2.32.3
+
+# CUDA 환경 설정 후 llama-cpp-python 설치
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH=${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+RUN pip install --no-cache-dir llama-cpp-python==0.2.91
+
 RUN pip install --no-cache-dir accelerate==0.33.0 huggingface-hub==0.25.1 pydantic==1.10.13 python-dotenv==1.0.1 aiohttp==3.10.5
 
 COPY . .
