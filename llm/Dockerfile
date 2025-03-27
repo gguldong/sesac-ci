@@ -228,13 +228,19 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# 패키지들을 점진적으로 설치
-RUN pip3 install --no-cache-dir \
-    uvicorn \
-    "langchain-core>=0.3.0,<0.4.0" \
-    "langchain-community>=0.3.0,<0.4.0" \
-    langchain==0.3.21
+# uvicorn 먼저 설치
+RUN pip3 install --no-cache-dir uvicorn
 
+# langchain-core 설치
+RUN pip3 install --no-cache-dir "langchain-core>=0.3.0,<0.4.0"
+
+# langchain-community 설치
+RUN pip3 install --no-cache-dir "langchain-community>=0.3.0,<0.4.0"
+
+# langchain 설치
+RUN pip3 install --no-cache-dir langchain==0.3.21
+
+# 나머지 패키지 설치
 RUN pip3 install --no-cache-dir \
     fastapi==0.115.11 \
     langchain-cohere==0.4.3 \
