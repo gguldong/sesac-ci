@@ -206,7 +206,7 @@ ENV TZ=Etc/UTC
 
 WORKDIR /app
 
-# 필요한 시스템 패키지 설치
+# 시스템 패키지 및 컴파일 도구 설치
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
@@ -215,22 +215,22 @@ RUN apt-get update && \
     build-essential \
     git \
     cmake \
+    curl \
+    libopenblas-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # pip 업그레이드 및 기본 도구 설치
 RUN pip3 install --upgrade pip setuptools wheel
 
-# 기본 의존성 패키지 설치
+# 기본 의존성 설치
 RUN pip3 install --no-cache-dir \
-    wheel \
-    setuptools \
     typing-extensions \
     pydantic \
     requests \
     packaging
 
-# 핵심 패키지들을 한 번에 설치 (langchain 제거)
+# 주요 패키지 설치
 RUN pip3 install --no-cache-dir \
     uvicorn \
     "langchain-core>=0.3.0,<0.4.0" \
@@ -243,10 +243,14 @@ RUN pip3 install --no-cache-dir \
     python-dotenv==1.0.1 \
     sentence-transformers==3.4.1 \
     cohere==5.14.0 \
-    PyYAML==6.0.2 \
-    llama-cpp-python==0.3.8
+    PyYAML==6.0.2
 
-# 소스 코드 복사
+# llama-cpp-python (CUDA 지원) 설치
+ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
+ENV FORCE_CMAKE=1
+RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
+
+# 애플리케이션 복사
 COPY . .
 
 # 포트 개방
