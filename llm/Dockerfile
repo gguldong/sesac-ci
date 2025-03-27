@@ -229,9 +229,8 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# LangChain 관련 패키지 (안정 호환 버전)
+# LangChain 하위 모듈만 설치 (메타 패키지 제외)
 RUN pip3 install --no-cache-dir \
-    langchain==0.1.21 \
     langchain-core==0.1.33 \
     langchain-community==0.0.21 \
     langchain-openai==0.0.8 \
@@ -253,11 +252,10 @@ ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
 ENV FORCE_CMAKE=1
 RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
 
-# 프로젝트 코드 복사
+# 소스 복사
 COPY . .
 
-# FastAPI 포트 노출
 EXPOSE 8001
 
-# 서버 실행
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
+
