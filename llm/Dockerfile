@@ -230,12 +230,11 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# 핵심 패키지들을 한 번에 설치
+# 핵심 패키지들을 한 번에 설치 (langchain 제거)
 RUN pip3 install --no-cache-dir \
     uvicorn \
     "langchain-core>=0.3.0,<0.4.0" \
     "langchain-community>=0.3.0,<0.4.0" \
-    langchain==0.3.21 \
     fastapi==0.115.11 \
     langchain-cohere==0.4.3 \
     langchain-openai==0.3.9 \
@@ -247,8 +246,11 @@ RUN pip3 install --no-cache-dir \
     PyYAML==6.0.2 \
     llama-cpp-python==0.3.8
 
+# 소스 코드 복사
 COPY . .
 
+# 포트 개방
 EXPOSE 8001
 
+# FastAPI 앱 실행
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
