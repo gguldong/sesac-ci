@@ -162,12 +162,58 @@
 ########################################################################################
 ########################################################################################
 
+# FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
+
+# WORKDIR /app
+
+# # 기본 개발 도구 및 Python 설치
+# RUN apt-get update && apt-get install -y build-essential git python3 python3-pip nvidia-cuda-toolkit && \
+#     rm -rf /var/lib/apt/lists/*
+
+# # 핵심 패키지 설치
+# RUN pip3 install --no-cache-dir \
+#     fastapi==0.115.11 \
+#     uvicorn==0.34.0 \
+#     langchain==0.3.21 \
+#     langchain-community==0.3.20 \
+#     langchain-core==0.3.46 \
+#     langchain-cohere==0.4.3 \
+#     langchain-openai==0.3.9 \
+#     tiktoken==0.9.0 \
+#     faiss-cpu==1.10.0 \
+#     python-dotenv==1.0.1 \
+#     sentence-transformers==3.4.1 \
+#     cohere==5.14.0 \
+#     PyYAML==6.0.2
+
+# # llama-cpp-python 패키지 추가 (GPU 지원 포함)
+# RUN CMAKE_ARGS="-DLLAMA_CUBLAS=ON" pip3 install --no-cache-dir llama-cpp-python==0.3.8
+
+# # CUDA 환경 변수 설정
+# ENV PATH=/usr/local/cuda/bin:$PATH
+# ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# COPY . .
+# EXPOSE 8001
+
+# # 수정된 실행 명령
+# CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
+######################################################################################################
 FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
 WORKDIR /app
 
-# 기본 개발 도구 및 Python 설치
-RUN apt-get update && apt-get install -y build-essential git python3 python3-pip nvidia-cuda-toolkit && \
+# tzdata를 제외하고 필요한 패키지만 설치
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    build-essential \
+    git \
+    && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # 핵심 패키지 설치
@@ -184,17 +230,10 @@ RUN pip3 install --no-cache-dir \
     python-dotenv==1.0.1 \
     sentence-transformers==3.4.1 \
     cohere==5.14.0 \
-    PyYAML==6.0.2
-
-# llama-cpp-python 패키지 추가 (GPU 지원 포함)
-RUN CMAKE_ARGS="-DLLAMA_CUBLAS=ON" pip3 install --no-cache-dir llama-cpp-python==0.3.8
-
-# CUDA 환경 변수 설정
-ENV PATH=/usr/local/cuda/bin:$PATH
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+    PyYAML==6.0.2 \
+    llama-cpp-python==0.3.8
 
 COPY . .
 EXPOSE 8001
 
-# 수정된 실행 명령
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
