@@ -229,12 +229,12 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# LangChain 최신 버전 조합 (2025년 3월 기준, 수정 완료)
+# LangChain 관련 패키지 (버전 미지정 → 최신 호환 조합 자동 설치)
 RUN pip3 install --no-cache-dir \
-    langchain-core==0.2.33 \
-    langchain-community==0.2.19 \
-    langchain-openai==0.1.25 \
-    langchain-cohere==0.2.4
+    langchain-core \
+    langchain-community \
+    langchain-openai \
+    langchain-cohere
 
 # 기타 유틸리티
 RUN pip3 install --no-cache-dir \
@@ -257,3 +257,4 @@ COPY . .
 EXPOSE 8001
 
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
+
