@@ -1,0 +1,24 @@
+# 베이스 이미지: Ubuntu 22.04
+FROM ubuntu:22.04
+
+# 필수 패키지 설치
+RUN apt update && apt install -y cmake gcc g++ wget python3 python3-pip python3-venv
+
+# NVIDIA 드라이버 및 CUDA 설치
+RUN apt install -y nvidia-driver-535
+RUN wget https://developer.download.nvidia.com/compute/cuda/12.4.0/local_installers/cuda_12.4.0_535.183.06_linux.run \
+    && sh cuda_12.4.0_535.183.06_linux.run --silent --toolkit --no-drm --no-man-page \
+    && rm cuda_12.4.0_535.183.06_linux.run
+
+# 환경 변수 설정
+ENV PATH=/usr/local/cuda-12.4/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH
+
+# Python 가상환경 설정
+RUN python3 -m venv /venv
+ENV PATH=/venv/bin:$PATH
+
+# llama-cpp-python 설치 (CUDA 지원)
+RUN CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.4/bin/nvcc" \
+pip install llama-cpp-python --force-reinstall --no-cache-dir
+

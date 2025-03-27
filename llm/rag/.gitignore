@@ -1,0 +1,10 @@
+**/.env
+.env
+
+
+**/llm/
+**/OpenChat-3.5-7B-Mixtral-v2.0.i1-Q4_K_M.gguf
+
+
+**/.venv
+**/__pychache__/
