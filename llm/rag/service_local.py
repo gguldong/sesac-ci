@@ -30,6 +30,28 @@ logger = logging.getLogger(__name__)
 USE_GPU = os.environ.get("USE_GPU", "1").lower() in ("1", "true", "yes", "y")
 
 # (중략: check_cuda_available, 모델 로드 등 기존 코드 유지)
+# GPU 사용 여부 확인 함수
+def check_cuda_available(model_path):
+    """CUDA 사용 가능 여부를 확인하는 함수"""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            if os.path.exists(model_path):
+                return True
+            else:
+                logger.warning(f"모델 파일이 존재하지 않습니다: {model_path}")
+                return False
+        else:
+            logger.warning("CUDA를 사용할 수 없습니다: GPU 지원이 없거나 CUDA가 설치되지 않았습니다")
+            return False
+    except ImportError:
+        logger.warning("PyTorch가 설치되지 않았습니다 - GPU를 사용할 수 없습니다")
+        return False
+    except Exception as e:
+        logger.warning(f"CUDA 확인 중 오류 발생: {str(e)}")
+        return False
+
+
 
 # 모델 초기화
 model_path = os.environ.get("MODEL_PATH", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models/OpenChat-3.5-7B-Mixtral-v2.0.i1-Q4_K_M.gguf"))
