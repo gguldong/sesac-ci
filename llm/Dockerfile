@@ -218,6 +218,13 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# pip 업그레이드 및 기본 의존성 설치
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir \
+    typing-extensions \
+    pydantic \
+    tenacity
+
 # 패키지를 개별적으로 설치
 RUN pip3 install --no-cache-dir fastapi==0.115.11
 RUN pip3 install --no-cache-dir uvicorn==0.27.1
