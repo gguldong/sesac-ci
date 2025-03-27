@@ -243,4 +243,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8001
 
-CMD ["bash", "run_api_server.sh"]
+CMD ["bash", "/app/rag/run_api_server.sh"]
