@@ -72,7 +72,7 @@ class RagResponse(BaseModel):
             }
         }
 
-@router.post("/api/rag", response_model=RagResponse)
+@rag_router.post("/api/rag", response_model=RagResponse)
 async def get_rag_results(request: RagRequest):
     try:
         # main 함수 호출
