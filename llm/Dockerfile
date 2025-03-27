@@ -206,7 +206,7 @@ ENV TZ=Etc/UTC
 
 WORKDIR /app
 
-# 시스템 패키지 및 컴파일 도구 설치
+# 시스템 필수 패키지 설치
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
@@ -217,27 +217,30 @@ RUN apt-get update && \
     cmake \
     curl \
     libopenblas-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# pip 업그레이드 및 기본 도구 설치
+# pip 및 툴 업그레이드
 RUN pip3 install --upgrade pip setuptools wheel
 
-# 기본 의존성 설치
+# Python 기본 유틸 설치
 RUN pip3 install --no-cache-dir \
     typing-extensions \
     pydantic \
     requests \
     packaging
 
-# 주요 패키지 설치
+# LangChain 관련 패키지 (안정 호환 버전)
 RUN pip3 install --no-cache-dir \
-    uvicorn \
-    "langchain-core>=0.3.0,<0.4.0" \
-    "langchain-community>=0.3.0,<0.4.0" \
+    langchain==0.1.21 \
+    langchain-core==0.1.33 \
+    langchain-community==0.0.21 \
+    langchain-openai==0.0.8 \
+    langchain-cohere==0.0.5
+
+# 기타 핵심 패키지
+RUN pip3 install --no-cache-dir \
     fastapi==0.115.11 \
-    langchain-cohere==0.4.3 \
-    langchain-openai==0.3.9 \
+    uvicorn \
     tiktoken==0.9.0 \
     faiss-cpu==1.10.0 \
     python-dotenv==1.0.1 \
@@ -245,16 +248,16 @@ RUN pip3 install --no-cache-dir \
     cohere==5.14.0 \
     PyYAML==6.0.2
 
-# llama-cpp-python (CUDA 지원) 설치
+# llama-cpp-python (CUDA 지원)
 ENV CMAKE_ARGS="-DLLAMA_CUBLAS=on"
 ENV FORCE_CMAKE=1
 RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
 
-# 애플리케이션 복사
+# 프로젝트 코드 복사
 COPY . .
 
-# 포트 개방
+# FastAPI 포트 노출
 EXPOSE 8001
 
-# FastAPI 앱 실행
+# 서버 실행
 CMD ["python3", "-m", "uvicorn", "rag.service_local:app", "--host", "0.0.0.0", "--port", "8001"]
