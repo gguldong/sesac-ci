@@ -221,29 +221,27 @@ RUN apt-get update && \
 # pip 및 핵심 도구 업그레이드
 RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
 
-# 패키지 설치 순서 조정 및 개별 설치
-RUN pip3 install --no-cache-dir \
-    typing-extensions \
-    pydantic \
-    fastapi==0.115.11
+# uvicorn 먼저 설치
+RUN pip3 install --no-cache-dir uvicorn
 
-RUN pip3 install --no-cache-dir \
-    uvicorn \
-    langchain==0.3.21 \
-    langchain-core==0.3.46 \
-    langchain-community==0.3.20
+# langchain-core 먼저 설치
+RUN pip3 install --no-cache-dir langchain-core==0.3.46
 
+# langchain-community 설치
+RUN pip3 install --no-cache-dir langchain-community==0.3.20
+
+# langchain 설치
+RUN pip3 install --no-cache-dir langchain==0.3.21
+
+# 나머지 패키지 설치 과정 (이전 Dockerfile과 동일)
 RUN pip3 install --no-cache-dir \
+    fastapi==0.115.11 \
     langchain-cohere==0.4.3 \
     langchain-openai==0.3.9 \
-    tiktoken==0.9.0
-
-RUN pip3 install --no-cache-dir \
+    tiktoken==0.9.0 \
     faiss-cpu==1.10.0 \
     python-dotenv==1.0.1 \
-    sentence-transformers==3.4.1
-
-RUN pip3 install --no-cache-dir \
+    sentence-transformers==3.4.1 \
     cohere==5.14.0 \
     PyYAML==6.0.2 \
     llama-cpp-python==0.3.8
