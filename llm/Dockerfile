@@ -203,7 +203,6 @@ FROM nvidia/cuda:12.1.1-runtime-ubuntu20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
-ENV LLAMA_CUBLAS=1
 
 WORKDIR /app
 
@@ -219,29 +218,21 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 패키지 설치 준비
-RUN pip3 install --no-cache-dir \
-    cmake \
-    scikit-build \
-    setuptools \
-    wheel
-
-# 주요 패키지 설치
-RUN pip3 install --no-cache-dir \
-    fastapi==0.115.11 \
-    uvicorn==0.27.1 \
-    langchain==0.3.21 \
-    langchain-community==0.3.20 \
-    langchain-core==0.3.46 \
-    langchain-cohere==0.4.3 \
-    langchain-openai==0.3.9 \
-    tiktoken==0.9.0 \
-    faiss-cpu==1.10.0 \
-    python-dotenv==1.0.1 \
-    sentence-transformers==3.4.1 \
-    cohere==5.14.0 \
-    PyYAML==6.0.2 \
-    llama-cpp-python==0.3.8
+# 패키지를 개별적으로 설치
+RUN pip3 install --no-cache-dir fastapi==0.115.11
+RUN pip3 install --no-cache-dir uvicorn==0.27.1
+RUN pip3 install --no-cache-dir langchain==0.3.21
+RUN pip3 install --no-cache-dir langchain-community==0.3.20
+RUN pip3 install --no-cache-dir langchain-core==0.3.46
+RUN pip3 install --no-cache-dir langchain-cohere==0.4.3
+RUN pip3 install --no-cache-dir langchain-openai==0.3.9
+RUN pip3 install --no-cache-dir tiktoken==0.9.0
+RUN pip3 install --no-cache-dir faiss-cpu==1.10.0
+RUN pip3 install --no-cache-dir python-dotenv==1.0.1
+RUN pip3 install --no-cache-dir sentence-transformers==3.4.1
+RUN pip3 install --no-cache-dir cohere==5.14.0
+RUN pip3 install --no-cache-dir PyYAML==6.0.2
+RUN pip3 install --no-cache-dir llama-cpp-python==0.3.8
 
 COPY . .
 
