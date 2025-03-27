@@ -229,11 +229,11 @@ RUN pip3 install --no-cache-dir \
     requests \
     packaging
 
-# LangChain 최신 버전 조합 (2025년 3월 기준)
+# LangChain 최신 버전 조합 (2025년 3월 기준, 수정 완료)
 RUN pip3 install --no-cache-dir \
     langchain-core==0.2.33 \
     langchain-community==0.2.19 \
-    langchain-openai==0.0.18 \
+    langchain-openai==0.1.25 \
     langchain-cohere==0.2.4
 
 # 기타 유틸리티
