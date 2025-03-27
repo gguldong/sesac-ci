@@ -39,7 +39,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
 
-@app.post("/generate", response_model=ChatResponse)
+@router.post("/generate", response_model=ChatResponse)
 async def generate_response(request: ChatRequest):
     try:
         start_time = time.time()

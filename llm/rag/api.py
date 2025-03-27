@@ -58,7 +58,7 @@ class RagResponse(BaseModel):
             }
         }
 
-@app.post("/api/rag", response_model=RagResponse)
+@router.post("/api/rag", response_model=RagResponse)
 async def get_rag_results(request: RagRequest):
     try:
         # main 함수 호출
