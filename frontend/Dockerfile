@@ -38,7 +38,7 @@ COPY build/ ./build/
 RUN npm install -g serve
 
 # 3000 포트로 서빙
-EXPOSE 3000
+EXPOSE 3001
 
 # build 디렉토리 내용을 서빙
 CMD ["serve", "-s", "build", "-l", "3000"]
